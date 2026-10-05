@@ -8,6 +8,9 @@ import CtaSection from '../components/CtaSection';
 import NotFound from './NotFound';
 import { ArrowRight, Check } from '../components/Icons';
 
+// Labels for the decorative week rail (session days are illustrative).
+const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
 export default function ProgramDetail() {
   const { slug } = useParams<{ slug: string }>();
   const program = slug ? getProgram(slug) : undefined;
@@ -37,6 +40,18 @@ export default function ProgramDetail() {
     return () => io.disconnect();
   }, [slug]);
 
+  // Hide the mobile action bar while the on-screen keyboard is open — the visual
+  // viewport shrinks well below the layout viewport when a keyboard appears.
+  const [keyboardOpen, setKeyboardOpen] = useState(false);
+  useEffect(() => {
+    const vv = window.visualViewport;
+    if (!vv) return;
+    const onResize = () => setKeyboardOpen(window.innerHeight - vv.height > 120);
+    onResize();
+    vv.addEventListener('resize', onResize);
+    return () => vv.removeEventListener('resize', onResize);
+  }, []);
+
   usePageMeta(
     program ? `${program.shortTitle} — NeuroMind` : 'Page Not Found — NeuroMind',
     program
@@ -54,8 +69,16 @@ export default function ProgramDetail() {
     ['--accent-ink' as string]: program.accentInk,
   };
 
+  // Weekly rhythm derived from the program data (weekly: '2 Hours/Week' | '4 Hours/Week').
+  const weeklyHours = Number.parseInt(program.weekly, 10);
+  const sessions =
+    Number.isFinite(weeklyHours) && weeklyHours > 0 ? Math.max(1, Math.round(weeklyHours / 2)) : 0;
+  const hoursPerSession = sessions > 0 ? Math.round(weeklyHours / sessions) : 0;
+  // Illustrative slots for the decorative week rail.
+  const sessionDays = sessions === 1 ? [2] : [1, 4];
+
   return (
-    <div style={accentStyle}>
+    <div className="program-detail-page" style={accentStyle}>
       {/* HERO */}
       <section className="page-hero">
         <div className="container">
@@ -104,7 +127,7 @@ export default function ProgramDetail() {
             <a href="#curriculum" className="btn btn-primary">
               Explore Curriculum <ArrowRight />
             </a>
-            <Link to="/contact" className="btn btn-secondary">
+            <Link to={`/contact?program=${program.slug}`} className="btn btn-secondary">
               Talk to NeuroMind
             </Link>
           </div>
@@ -131,11 +154,44 @@ export default function ProgramDetail() {
               {s.label}
             </a>
           ))}
-          <Link to="/contact" className="section-nav-cta">
+          <Link to={`/contact?program=${program.slug}`} className="section-nav-cta">
             Ask a Question
           </Link>
         </div>
       </nav>
+
+      {/* A TYPICAL WEEK — illustrative rhythm; hours derive from the program data */}
+      {sessions > 0 && (
+        <section className="week-section" aria-labelledby="typical-week-title">
+          <div className="container">
+            <div className="week-strip reveal">
+              <div className="week-strip-head">
+                <div>
+                  <span className="eyebrow">A Typical Week</span>
+                  <h2 id="typical-week-title" className="week-strip-title">
+                    {weeklyHours} hours per week
+                  </h2>
+                </div>
+                <p className="week-strip-meta">
+                  <strong>
+                    {sessions} session{sessions === 1 ? '' : 's'} × {hoursPerSession} hours
+                  </strong>
+                  <span className="week-strip-sub">{program.hours} total across the program</span>
+                </p>
+              </div>
+              <div className="week-days" aria-hidden="true">
+                {DAY_LABELS.map((day, i) => (
+                  <div key={day} className={`week-day${sessionDays.includes(i) ? ' on' : ''}`}>
+                    <span className="week-day-label">{day}</span>
+                    <span className="week-day-slot">{sessionDays.includes(i) ? `${hoursPerSession}h` : ''}</span>
+                  </div>
+                ))}
+              </div>
+              <p className="week-note">Illustrative — actual timings depend on batch schedule</p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* DESCRIPTION */}
       <section className="section-tight" id="overview">
@@ -534,7 +590,7 @@ export default function ProgramDetail() {
           title="Ready to explore this path?"
           sub="Take the next step — explore the full curriculum in detail, or talk to NeuroMind about your questions."
           primary={{ label: 'Explore the Curriculum', to: '#curriculum' }}
-          secondary={{ label: 'Talk to NeuroMind', to: '/contact' }}
+          secondary={{ label: 'Talk to NeuroMind', to: `/contact?program=${program.slug}` }}
           tertiary={{ label: 'Compare Programs', to: '/programs#compare' }}
         />
       </section>
@@ -576,6 +632,16 @@ export default function ProgramDetail() {
         </div>
       </section>
       <div style={{ height: 32 }} />
+
+      {/* Mobile sticky action bar — under 768px only (CSS-gated) */}
+      <nav className={`program-cta-bar${keyboardOpen ? ' kb-open' : ''}`} aria-label="Program actions">
+        <Link to={`/contact?program=${program.slug}`} className="btn btn-primary program-cta-btn">
+          Talk to Us
+        </Link>
+        <Link to="/programs#compare" className="btn btn-secondary program-cta-btn">
+          Compare
+        </Link>
+      </nav>
     </div>
   );
 }

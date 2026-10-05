@@ -1,11 +1,11 @@
 import { useState, type FormEvent } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { useReveal } from '../hooks/useReveal';
 import { usePageMeta } from '../hooks/usePageMeta';
 import { programs } from '../data';
+import { CONTACT_PLACEHOLDER, SITE } from '../data/site';
 import { submitInquiry } from '../lib/inquiry';
 import { ArrowRight, Check, Compass, Info } from '../components/Icons';
-import PlaceholderNote from '../components/Placeholder';
 import HelpMeChoose from '../components/HelpMeChoose';
 
 interface FormState {
@@ -28,8 +28,21 @@ const empty: FormState = {
   message: '',
 };
 
+/** Contact options the owner has actually published in src/data/site.ts.
+ *  Placeholder/empty values never render. */
+const publishedContactOptions = SITE.contactOptions.filter((o) => {
+  const v = o.value.trim();
+  return v !== '' && v !== CONTACT_PLACEHOLDER;
+});
+
 export default function Contact() {
-  const [form, setForm] = useState<FormState>(empty);
+  const [searchParams] = useSearchParams();
+  // Preselect the program from a known ?program=<slug> on mount; unknown slugs
+  // are ignored silently (the dropdown just stays on its default).
+  const [form, setForm] = useState<FormState>(() => {
+    const slug = searchParams.get('program') ?? '';
+    return programs.some((p) => p.slug === slug) ? { ...empty, program: slug } : empty;
+  });
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
   // 'not-connected' is the honest state until submitInquiry is wired to a real channel
   const [phase, setPhase] = useState<'idle' | 'not-connected' | 'sent'>('idle');
@@ -108,7 +121,7 @@ export default function Contact() {
       </section>
 
       <section className="section">
-        <div className="container" style={{ maxWidth: 780 }}>
+        <div className="container contact-layout">
           <div className="form-card reveal">
             {phase === 'not-connected' ? (
               <div className="form-success" role="status">
@@ -336,6 +349,34 @@ export default function Contact() {
               </form>
             )}
           </div>
+
+          <aside className="contact-aside reveal">
+            <div className="card">
+              <h2 style={{ fontSize: '1.0625rem', marginBottom: 12 }}>What happens next</h2>
+              <ol className="next-steps">
+                {SITE.whatHappensNext.map((step) => (
+                  <li key={step}>{step}</li>
+                ))}
+              </ol>
+              {SITE.responseNote && <p className="contact-note">{SITE.responseNote}</p>}
+            </div>
+            <div className="card">
+              <h2 style={{ fontSize: '1.0625rem', marginBottom: 12 }}>Contact options</h2>
+              {publishedContactOptions.length === 0 ? (
+                <p className="contact-empty">
+                  Contact details are being finalised and will be published here.
+                </p>
+              ) : (
+                <ul className="contact-options">
+                  {publishedContactOptions.map((o) => (
+                    <li key={o.type}>
+                      <b>{o.type}</b> {o.value}
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -356,12 +397,6 @@ export default function Contact() {
                 learning outcomes? We are happy to provide clear, detailed answers.
               </p>
             </div>
-          </div>
-          <div style={{ marginTop: 20 }}>
-            <PlaceholderNote label="Contact details — not yet published">
-              A phone number and email address will be published here once NeuroMind confirms
-              them.
-            </PlaceholderNote>
           </div>
         </div>
       </section>

@@ -13,6 +13,17 @@ export default function NotFound() {
           The page you are looking for doesn't exist or may have been moved. Let's get you back on
           track.
         </p>
+        <div className="n404-programs">
+          <p className="n404-programs-label" id="n404-programs-label">
+            Popular programs
+          </p>
+          <div className="n404-links" aria-labelledby="n404-programs-label">
+            <Link to="/programs/ai-foundation">AI Foundations</Link>
+            <Link to="/programs/data-science-ai">Data Science &amp; AI</Link>
+            <Link to="/programs/cybersecurity">Cybersecurity</Link>
+            <Link to="/programs/product-ux-ai-design">Product &amp; UX / AI Design</Link>
+          </div>
+        </div>
         <div style={{ display: 'flex', gap: 12, justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link to="/" className="btn btn-primary">
             Back to Home <ArrowRight />

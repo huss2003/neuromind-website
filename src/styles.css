@@ -537,41 +537,6 @@ h1, h2, h3, h4, h5 {
   color: var(--ink-3);
   margin-bottom: 24px;
 }
-.prog-path { display: flex; flex-direction: column; gap: 0; }
-.prog-step {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 0;
-  position: relative;
-}
-.prog-step:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 17px;
-  top: 46px;
-  bottom: -2px;
-  width: 2px;
-  background: linear-gradient(180deg, var(--step-color, var(--blue)) 0%, var(--line) 100%);
-  opacity: 0.35;
-}
-.prog-dot {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 0.8125rem;
-  font-weight: 700;
-  font-family: var(--font-head);
-  color: var(--step-ink, #fff);
-  background: var(--step-color, var(--blue));
-  flex-shrink: 0;
-  box-shadow: 0 0 0 4px var(--step-soft, var(--blue-50));
-}
-.prog-label { font-weight: 600; color: var(--ink); font-size: 0.9375rem; }
-.prog-desc { font-size: 0.8125rem; color: var(--ink-3); }
 
 /* ---------- Program cards ---------- */
 .program-card {
@@ -2076,7 +2041,7 @@ dialog.hmc-modal::backdrop {
 .pc-type {
   display: inline-flex;
   align-items: center;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -2101,7 +2066,7 @@ dialog.hmc-modal::backdrop {
 }
 .pc-fact { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
 .pc-fact dt {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -2140,18 +2105,18 @@ dialog.hmc-modal::backdrop {
 /* Phone widths (360–390px): keep type, entry and CTA readable, no horizontal scroll */
 @media (max-width: 400px) {
   .pc-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 8px; gap: 6px; }
-  .pc-fact dt { font-size: 0.625rem; }
+  .pc-fact dt { font-size: 0.75rem; }
   .pc-fact dd { font-size: 0.75rem; }
   .program-card { padding: 20px 16px; }
   .program-card h3 { font-size: 1.0625rem; }
-  .pc-progression { font-size: 0.6875rem; }
+  .pc-progression { font-size: 0.75rem; }
 }
 
 /* 4. Comparison — glance type label + full detailed table below (progressive disclosure) */
 .cg-type {
   display: inline-flex;
   align-items: center;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -2168,7 +2133,7 @@ dialog.hmc-modal::backdrop {
   .cg-grid { grid-template-columns: 1fr; }
   .cg-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
   .cg-fact { grid-template-columns: 1fr; gap: 1px; }
-  .cg-fact dt { font-size: 0.625rem; }
+  .cg-fact dt { font-size: 0.75rem; }
   .cg-fact dd { font-size: 0.75rem; overflow-wrap: anywhere; }
   .cg-card { padding: 16px; }
 }
@@ -2287,3 +2252,365 @@ dialog.hmc-modal::backdrop {
   color: var(--ink-3);
   font-size: 0.9375rem;
 }
+
+/* === polish pass === */
+/* Fixes in this block: (4) sub-13px type floor applied in place above;
+   (6) app-shell flex column so the footer never floats on short pages;
+   (7) right-edge shadow bleed from the always-mounted off-canvas drawer;
+   (1) mobile sticky CTA bar on program pages; (3) "A typical week" strip;
+   (5) 404 popular-program links. Fixed layers (.nav, .drawer, .skip-link)
+   are out of flow, so the sticky nav and drawer layering are untouched. */
+
+/* -- 6. Footer float: short pages (e.g. 404) left a gap below the footer on
+   tall screens (measured 15px @1440x1900, 75px @1920x2100 before this fix).
+   #root becomes a flex column; main absorbs the free space so the footer
+   lands on the viewport bottom. Sticky .section-nav still works inside main. */
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-height: 100dvh;
+}
+#root > main { flex: 1 0 auto; }
+
+/* -- 7. Right-edge artifact: the closed off-canvas drawer (fixed, translated
+   100% right) painted its 48px box-shadow into the viewport's right edge on
+   every page (edge pixel rgb(240,241,243) vs interior rgb(252,253,254) at
+   1440px). The shadow now exists only while the drawer is actually open. */
+.drawer:not(.open) { box-shadow: none; }
+.drawer { transition: transform var(--t-base), box-shadow var(--t-base); }
+
+/* -- 1. Mobile sticky action bar (program detail, <768px only). z-index 40
+   sits under .section-nav (50), .nav (100) and the drawer (200/201). */
+.program-cta-bar { display: none; }
+@media (max-width: 767.98px) {
+  .program-detail-page { padding-bottom: calc(88px + env(safe-area-inset-bottom)); }
+  .program-cta-bar {
+    display: flex;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 40;
+    gap: 10px;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(255, 255, 255, 0.94);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+    border-top: 1px solid var(--line);
+    box-shadow: 0 -6px 20px rgba(15, 23, 42, 0.06);
+  }
+  .program-cta-bar.kb-open { display: none; }
+  .program-cta-btn { flex: 1; min-height: 48px; }
+}
+
+/* -- 3. "A typical week" strip (compact, pure CSS; hours derive from data). */
+.week-section { padding-top: 56px; }
+.week-strip {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 24px 28px;
+  display: grid;
+  gap: 18px;
+}
+.week-strip-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.week-strip-head .eyebrow { margin-bottom: 6px; }
+.week-strip-title { font-size: 1.375rem; margin: 0; }
+.week-strip-meta { margin: 0; text-align: right; }
+.week-strip-meta strong {
+  display: block;
+  font-family: var(--font-head);
+  font-size: 1.0625rem;
+  color: var(--ink);
+}
+.week-strip-sub { font-size: 0.8125rem; color: var(--ink-3); }
+.week-days { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 8px; }
+.week-day {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 4px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-sm);
+  background: var(--bg-soft);
+}
+.week-day-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.week-day-slot {
+  width: 100%;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 700;
+}
+.week-day.on .week-day-slot {
+  background: color-mix(in srgb, var(--accent, var(--blue)) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--accent, var(--blue)) 30%, transparent);
+  color: var(--accent-ink, var(--blue));
+}
+.week-day:not(.on) .week-day-slot { border: 1px dashed var(--line-strong); }
+.week-note { margin: 0; font-size: 0.8125rem; color: var(--ink-3); }
+
+/* -- 5. 404 popular-program quick links. */
+.n404-programs { margin-bottom: 32px; }
+.n404-programs-label { font-size: 0.875rem; color: var(--ink-3); margin-bottom: 10px; }
+.n404-links { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
+.n404-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--r-pill);
+  background: var(--card);
+  color: var(--ink-2);
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: border-color var(--t-fast), color var(--t-fast), box-shadow var(--t-fast);
+}
+.n404-links a:hover { border-color: var(--blue); color: var(--blue); box-shadow: var(--shadow-xs); }
+
+/* Narrow phones: keep the week rail readable. */
+@media (max-width: 560px) {
+  .week-strip { padding: 20px 16px; }
+  .week-days { gap: 5px; }
+  .week-day { padding: 8px 2px; }
+  .week-strip-meta { text-align: left; }
+}
+
+
+/* === home pass === */
+
+/* Compact compare link panel (full comparison table lives on /programs#compare).
+   Keeps id="compare" so existing /#compare links still resolve to a sensible target. */
+.compare-panel {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px 40px;
+  flex-wrap: wrap;
+  background: var(--bg-soft);
+  border: 1px solid var(--line);
+  border-radius: var(--r-lg);
+  padding: 22px 28px;
+}
+.compare-panel .eyebrow { margin-bottom: 4px; }
+.compare-panel-line {
+  margin: 0;
+  font-size: 1rem;
+  color: var(--ink-2);
+  max-width: 62ch;
+}
+.compare-panel .link-arrow { flex-shrink: 0; }
+
+/* Hero visual — illustrative learning-path mockup (pure CSS/SVG, no images/deps).
+   Replacement for the old progression strip: at desktop the hero height is driven
+   by the copy column, so this stays within the same hero height. */
+.hv-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.hv-head .hero-visual-title { margin-bottom: 0; }
+.hv-tag {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  background: var(--bg-tint);
+  border: 1px solid var(--line);
+  border-radius: var(--r-pill);
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.hv-path { list-style: none; margin: 0; padding: 0; }
+.hv-step {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+}
+.hv-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 13px;
+  top: 33px;
+  bottom: -6px;
+  width: 2px;
+  background: linear-gradient(180deg, var(--step-color, var(--blue)) 0%, var(--line) 100%);
+  opacity: 0.35;
+}
+.hv-dot {
+  width: 27px;
+  height: 27px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--step-ink, #fff);
+  background: var(--step-color, var(--blue));
+  box-shadow: 0 0 0 3px var(--step-soft, var(--blue-50));
+  flex-shrink: 0;
+}
+.hv-dot-next { background: var(--deep); box-shadow: 0 0 0 3px var(--bg-tint); }
+.hv-step-text { display: flex; flex-direction: column; min-width: 0; }
+.hv-step-label { font-weight: 600; font-size: 0.875rem; line-height: 1.35; color: var(--ink); }
+.hv-step-desc { font-size: 0.75rem; line-height: 1.4; color: var(--ink-3); }
+.hv-mock {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px dashed var(--line-strong);
+}
+.hv-mock-row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.hv-mock-label { font-size: 0.75rem; font-weight: 600; color: var(--ink-3); }
+.hv-bar {
+  flex: 1;
+  min-width: 56px;
+  height: 6px;
+  border-radius: 3px;
+  background: var(--bg-tint);
+  overflow: hidden;
+}
+.hv-bar-fill {
+  display: block;
+  width: 62%;
+  height: 100%;
+  border-radius: 3px;
+  background: linear-gradient(90deg, var(--blue), var(--purple));
+}
+.hv-mock-note { font-size: 0.75rem; font-weight: 500; color: var(--ink-4); white-space: nowrap; }
+.hv-chip {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--purple);
+  background: var(--purple-50);
+  border-radius: var(--r-pill);
+  padding: 3px 10px;
+  white-space: nowrap;
+}
+.hv-dots { display: inline-flex; gap: 4px; }
+.hv-dots i { width: 9px; height: 9px; border-radius: 3px; background: var(--bg-tint); }
+.hv-dots i:nth-child(-n + 3) { background: var(--green); opacity: 0.8; }
+.hv-note { margin-top: 10px; font-size: 0.75rem; color: var(--ink-4); }
+
+/* Phones (360–390px): keep the mockup legible inside the narrower card */
+@media (max-width: 400px) {
+  .hero-visual { padding: 24px 22px; }
+}
+
+/* === nav/footer pass === */
+/* Desktop Programs mega-menu. The nav row and its Programs item stretch to the
+   full header height so the absolutely positioned panel attaches flush to the
+   header bottom — no hover gap, no layout shift. */
+.nav-inner > nav { align-self: stretch; display: flex; }
+.nav-links { height: 100%; }
+.nav-programs { position: relative; align-self: stretch; display: flex; align-items: center; }
+.nav-programs-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--r-sm);
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--ink-2);
+  transition: color var(--t-fast), background var(--t-fast);
+}
+.nav-programs-btn:hover { color: var(--ink); background: var(--bg-tint); }
+.nav-programs-btn.active { color: var(--blue); font-weight: 600; }
+.nav-drop {
+  display: none;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: min(360px, calc(100vw - 32px));
+  padding: 10px;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-xl);
+}
+.nav-drop.open { display: block; }
+.nav-drop-list { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.nav-drop-list a {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  padding: 10px 12px;
+  border-radius: var(--r-sm);
+  transition: background var(--t-fast);
+}
+.nav-drop-list a:hover { background: var(--bg-tint); }
+.nav-drop-name { font-size: 0.9375rem; font-weight: 600; color: var(--ink); }
+.nav-drop-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.nav-drop-foot {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-top: 8px;
+  padding: 12px 12px 6px;
+  border-top: 1px solid var(--line);
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+.nav-drop-foot a { color: var(--blue); }
+.nav-drop-foot a:hover { text-decoration: underline; }
+
+
+/* === contact pass === */
+/* Contact page layout: form first, then a "What happens next" / "Contact
+   options" side column to its right. The grid sits on the container itself;
+   below 1024px the side column drops under the form. */
+.contact-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 28px;
+  align-items: start;
+}
+@media (max-width: 1024px) {
+  .contact-layout { grid-template-columns: 1fr; }
+}
+.contact-aside { display: grid; gap: 20px; }
+
+/* Numbered steps — native <ol> markers, tinted; no JS numbering. */
+.next-steps { margin: 0; padding-left: 22px; display: grid; gap: 12px; }
+.next-steps li { font-size: 0.9375rem; color: var(--ink-2); line-height: 1.6; padding-left: 4px; }
+.next-steps li::marker { color: var(--blue); font-weight: 700; }
+
+/* Published contact options (rendered only when the owner fills src/data/site.ts). */
+.contact-options { list-style: none; margin: 0; padding: 0; display: grid; gap: 10px; }
+.contact-options li { font-size: 0.9375rem; color: var(--ink-2); overflow-wrap: anywhere; }
+.contact-options b { color: var(--ink); }
+
+/* Empty-state line + optional response note: restrained, no call-to-action. */
+.contact-empty,
+.contact-note { font-size: 0.9375rem; color: var(--ink-3); line-height: 1.6; margin: 0; }
+.contact-note { margin-top: 12px; }

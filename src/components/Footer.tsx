@@ -43,7 +43,7 @@ export default function Footer() {
               <li><Link to="/#journey">Learning Journey</Link></li>
               <li><Link to="/#projects">Projects</Link></li>
               <li><Link to="/#certification">Certification Prep</Link></li>
-              <li><Link to="/#compare">Compare Programs</Link></li>
+              <li><Link to="/programs#compare">Compare Programs</Link></li>
               <li><Link to="/#faq">FAQs</Link></li>
             </ul>
           </div>
@@ -53,7 +53,6 @@ export default function Footer() {
             <ul className="footer-links">
               <li><Link to="/about">About NeuroMind</Link></li>
               <li><Link to="/contact">Contact</Link></li>
-              <li><Link to="/contact">Program Inquiry</Link></li>
             </ul>
           </div>
         </div>

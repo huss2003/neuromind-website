@@ -5,7 +5,6 @@ import { usePageMeta } from '../hooks/usePageMeta';
 import { programs, foundationProgram, professionalPrograms } from '../data';
 import ProgramCard from '../components/ProgramCard';
 import SectionHead from '../components/SectionHead';
-import ComparisonTable from '../components/ComparisonTable';
 import HelpMeChoose from '../components/HelpMeChoose';
 import CtaSection from '../components/CtaSection';
 import { ArrowRight, Check, Compass } from '../components/Icons';
@@ -67,34 +66,63 @@ const faqs = [
 ];
 
 function LearningPathVisual() {
-  const steps = [
-    { label: 'Beginner', desc: 'Absolute beginner entry', color: '#2563EB', soft: '#EFF6FF', inkOnAccent: '#FFFFFF' },
-    { label: 'Learning', desc: 'Structured concepts + labs', color: '#7C3AED', soft: '#F5F3FF', inkOnAccent: '#FFFFFF' },
-    { label: 'Building', desc: 'Hands-on projects monthly', color: '#06B6D4', soft: '#ECFEFF', inkOnAccent: '#0F172A' },
-    { label: 'Creating', desc: 'Portfolio evidence', color: '#10B981', soft: '#ECFDF5', inkOnAccent: '#0F172A' },
-    { label: 'Professional', desc: 'Professional-level capability', color: '#F59E0B', soft: '#FFFBEB', inkOnAccent: '#0F172A' },
+  // Stage names follow the `progression` fields in src/data (AI Foundations, then professional programs).
+  const stages = [
+    { label: 'Absolute Beginner', desc: 'No prior technical knowledge', color: '#2563EB', soft: '#EFF6FF', inkOnAccent: '#FFFFFF' },
+    { label: 'AI-Literate', desc: 'Understand AI and use it responsibly', color: '#7C3AED', soft: '#F5F3FF', inkOnAccent: '#FFFFFF' },
+    { label: 'AI Builder', desc: 'No-code AI projects and agents', color: '#06B6D4', soft: '#ECFEFF', inkOnAccent: '#0F172A' },
+    { label: 'AI Creator', desc: 'Python basics and a capstone portfolio', color: '#10B981', soft: '#ECFDF5', inkOnAccent: '#0F172A' },
   ];
   return (
     <div className="hero-visual reveal">
-      <p className="hero-visual-title">The NeuroMind Progression</p>
-      <div className="prog-path">
-        {steps.map((s, i) => (
-          <div
+      <div className="hv-head">
+        <p className="hero-visual-title">Your learning path</p>
+        <span className="hv-tag">Illustrative</span>
+      </div>
+
+      <ol className="hv-path">
+        {stages.map((s, i) => (
+          <li
             key={s.label}
-            className="prog-step"
+            className="hv-step"
             style={{ ['--step-color' as string]: s.color, ['--step-soft' as string]: s.soft, ['--step-ink' as string]: s.inkOnAccent }}
           >
-            <span className="prog-dot" aria-hidden="true">
-              {i + 1}
+            <span className="hv-dot" aria-hidden="true">{i + 1}</span>
+            <span className="hv-step-text">
+              <span className="hv-step-label">{s.label}</span>
+              <span className="hv-step-desc">{s.desc}</span>
             </span>
-            <span>
-              <span className="prog-label">{s.label}</span>
-              <br />
-              <span className="prog-desc">{s.desc}</span>
-            </span>
-          </div>
+          </li>
         ))}
+        <li className="hv-step hv-step-next">
+          <span className="hv-dot hv-dot-next" aria-hidden="true">
+            <ArrowRight size={13} />
+          </span>
+          <span className="hv-step-text">
+            <span className="hv-step-label">Then: professional programs</span>
+            <span className="hv-step-desc">3-year pathways toward Professional / Job-ready</span>
+          </span>
+        </li>
+      </ol>
+
+      {/* Decorative mock UI — labelled illustrative, hidden from assistive tech */}
+      <div className="hv-mock" aria-hidden="true">
+        <div className="hv-mock-row">
+          <span className="hv-mock-label">Module progress</span>
+          <span className="hv-bar"><span className="hv-bar-fill" /></span>
+          <span className="hv-mock-note">In progress</span>
+        </div>
+        <div className="hv-mock-row">
+          <span className="hv-mock-label">Guided project</span>
+          <span className="hv-chip">No-Code AI Agent</span>
+        </div>
+        <div className="hv-mock-row">
+          <span className="hv-mock-label">Portfolio evidence</span>
+          <span className="hv-dots"><i /><i /><i /><i /></span>
+          <span className="hv-mock-note">Grows monthly</span>
+        </div>
       </div>
+      <p className="hv-note">Illustrative mockup — not actual learner data.</p>
     </div>
   );
 }
@@ -307,15 +335,21 @@ export default function Home() {
         </div>
       </section>
 
-      {/* COMPARISON */}
-      <section className="section bg-soft" id="compare">
+      {/* COMPARE — compact link panel. Full comparison table lives on /programs#compare. */}
+      <section className="section-tight">
         <div className="container">
-          <SectionHead
-            eyebrow="Compare Programs"
-            title="See the differences side by side."
-            sub="A clear comparison of duration, commitment, focus and outcomes across all four programs — for clarity, not ranking."
-          />
-          <ComparisonTable />
+          <div className="compare-panel reveal">
+            <div>
+              <span className="eyebrow">Compare</span>
+              <p className="compare-panel-line">
+                See all four programs side by side — duration, entry level, weekly commitment and
+                focus.
+              </p>
+            </div>
+            <Link to="/programs#compare" className="link-arrow">
+              Compare all programs <ArrowRight size={14} />
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -327,25 +361,11 @@ export default function Home() {
             <h2 className="section-title">
               You don't need to know everything before you start.
             </h2>
-            <p className="section-sub" style={{ marginInline: 'auto', maxWidth: 560, marginBottom: 40 }}>
+            <p className="section-sub" style={{ marginInline: 'auto', maxWidth: 560 }}>
               Every NeuroMind program explicitly begins at absolute beginner level. The curriculum
               is designed so that a student with no prior technical knowledge can follow along,
               build skills gradually and progress with confidence.
             </p>
-          </div>
-          <div className="prog-strip reveal" style={{ maxWidth: 760, marginInline: 'auto' }}>
-            {[
-              { label: 'Start', desc: 'No prior knowledge needed', color: '#2563EB' },
-              { label: 'Learn', desc: 'Concepts from zero', color: '#7C3AED' },
-              { label: 'Practice', desc: 'Hands-on every month', color: '#06B6D4' },
-              { label: 'Build', desc: 'Projects and portfolio', color: '#10B981' },
-              { label: 'Advance', desc: 'Professional capability', color: '#F59E0B' },
-            ].map((s) => (
-              <div key={s.label} className="prog-strip-step" style={{ ['--strip-color' as string]: s.color }}>
-                <div className="prog-strip-label">{s.label}</div>
-                <div className="prog-strip-desc">{s.desc}</div>
-              </div>
-            ))}
           </div>
         </div>
       </section>

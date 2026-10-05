@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import { useLockBody } from '../hooks/useLockBody';
+import { programs } from '../data';
 import { Menu, Close, ArrowRight } from './Icons';
 
 const links = [
@@ -13,6 +14,14 @@ const links = [
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [programsOpen, setProgramsOpen] = useState(false);
+  const programsRef = useRef<HTMLLIElement>(null);
+  const programsBtnRef = useRef<HTMLButtonElement>(null);
+  const closeTimer = useRef<number | undefined>(undefined);
+  // Distinguishes hover-opened from click/keyboard-opened: on hover-capable
+  // devices the pointer opens the menu before a click lands, so the first
+  // click must NOT immediately toggle it shut (it "confirms" the hover).
+  const openedByHover = useRef(false);
   const location = useLocation();
   useLockBody(drawerOpen);
 
@@ -25,15 +34,52 @@ export default function Navbar() {
 
   useEffect(() => {
     setDrawerOpen(false);
+    setProgramsOpen(false);
   }, [location.pathname, location.hash]);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setDrawerOpen(false);
+      if (e.key !== 'Escape') return;
+      setDrawerOpen(false);
+      if (programsOpen) {
+        setProgramsOpen(false);
+        programsBtnRef.current?.focus();
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [programsOpen]);
+
+  useEffect(() => {
+    if (!programsOpen) return;
+    const onPointerDown = (e: PointerEvent) => {
+      if (!programsRef.current?.contains(e.target as Node)) setProgramsOpen(false);
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [programsOpen]);
+
+  // Hover open is skipped on touch input (tap would fire mouseenter then click,
+  // opening and closing in one tap).
+  const openPrograms = () => {
+    if (!window.matchMedia('(hover: hover)').matches) return;
+    window.clearTimeout(closeTimer.current);
+    openedByHover.current = true;
+    setProgramsOpen(true);
+  };
+  // Small close delay so the pointer can cross from the trigger to the panel.
+  const closeProgramsSoon = () => {
+    if (programsRef.current?.contains(document.activeElement)) return;
+    window.clearTimeout(closeTimer.current);
+    closeTimer.current = window.setTimeout(() => setProgramsOpen(false), 120);
+  };
+
+  const isProgramsSection = location.pathname.startsWith('/programs');
+
+  // Any close (hover-away, Escape, outside click, route change) resets the flag.
+  useEffect(() => {
+    if (!programsOpen) openedByHover.current = false;
+  }, [programsOpen]);
 
   return (
     <>
@@ -48,24 +94,76 @@ export default function Navbar() {
 
           <nav aria-label="Main navigation">
             <ul className="nav-links">
-              {links.map((l) => (
-                <li key={l.label}>
-                  <NavLink
-                    to={l.to}
-                    className={({ isActive }) =>
-                      isActive && !l.to.includes('#') ? 'active' : undefined
+              <li
+                className="nav-programs"
+                ref={programsRef}
+                onMouseEnter={openPrograms}
+                onMouseLeave={closeProgramsSoon}
+                onBlur={(e) => {
+                  if (!e.currentTarget.contains(e.relatedTarget as Node)) setProgramsOpen(false);
+                }}
+              >
+                <button
+                  ref={programsBtnRef}
+                  type="button"
+                  className={`nav-programs-btn${isProgramsSection ? ' active' : ''}`}
+                  aria-expanded={programsOpen}
+                  aria-haspopup="true"
+                  aria-controls="programs-dropdown"
+                  onClick={() => {
+                    if (openedByHover.current) {
+                      openedByHover.current = false; // first click confirms hover-open
+                      return;
                     }
-                  >
-                    {l.label}
-                  </NavLink>
-                </li>
-              ))}
+                    setProgramsOpen((open) => !open);
+                  }}
+                >
+                  Programs
+                </button>
+                <div
+                  id="programs-dropdown"
+                  className={`nav-drop${programsOpen ? ' open' : ''}`}
+                  onClick={() => setProgramsOpen(false)}
+                >
+                  <ul className="nav-drop-list">
+                    {programs.map((p) => (
+                      <li key={p.slug}>
+                        <Link to={`/programs/${p.slug}`}>
+                          <span className="nav-drop-name">{p.shortTitle}</span>
+                          <span className="nav-drop-chips">
+                            <span className="chip chip-neutral">{p.duration}</span>
+                            <span className="chip chip-neutral">{p.entry}</span>
+                          </span>
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="nav-drop-foot">
+                    <Link to="/programs#compare">Compare all programs</Link>
+                    <Link to="/programs">Help me choose</Link>
+                  </div>
+                </div>
+              </li>
+              {links
+                .filter((l) => l.to !== '/programs')
+                .map((l) => (
+                  <li key={l.label}>
+                    <NavLink
+                      to={l.to}
+                      className={({ isActive }) =>
+                        isActive && !l.to.includes('#') ? 'active' : undefined
+                      }
+                    >
+                      {l.label}
+                    </NavLink>
+                  </li>
+                ))}
             </ul>
           </nav>
 
           <div className="nav-cta">
-            <Link to="/programs" className="btn btn-primary">
-              Explore Programs <ArrowRight />
+            <Link to="/contact" className="btn btn-primary">
+              Talk to Us <ArrowRight />
             </Link>
             <button
               className="nav-toggle"
