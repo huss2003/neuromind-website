@@ -25,7 +25,7 @@
   /* Neutrals */
   --ink: #0f172a;
   --ink-2: #334155;
-  --ink-3: #64748b;
+  --ink-3: #475569;
   --ink-4: #94a3b8;
   --line: rgba(15, 23, 42, 0.08);
   --line-strong: rgba(15, 23, 42, 0.14);
@@ -149,8 +149,7 @@ h1, h2, h3, h4, h5 {
   gap: 8px;
   font-size: 0.8125rem;
   font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  letter-spacing: 0.01em;
   color: var(--accent-ink, var(--blue));
   margin-bottom: 12px;
 }
@@ -1945,7 +1944,7 @@ dialog.hmc-modal::backdrop {
    to .hero so inner-page .hero-sub is untouched. */
 .hero { padding-top: calc(var(--nav-h) + 48px); padding-bottom: 56px; }
 .hero .hero-badge { margin-bottom: 16px; }
-.hero h1 { font-size: clamp(2.25rem, 4vw, 3rem); margin-bottom: 16px; }
+.hero h1 { font-size: clamp(2.5rem, 4.5vw, 3.5rem); margin-bottom: 16px; }
 .hero .hero-sub { font-size: 1.0625rem; line-height: 1.6; margin-bottom: 24px; }
 .hero .hero-actions { margin-bottom: 28px; }
 
@@ -2686,11 +2685,9 @@ dialog.hmc-modal::backdrop {
 /* Mono data-label style used for hours, month numbers, stage tags */
 .mono-label {
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.8125rem;
   font-weight: 500;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  color: var(--ink-3);
+  color: var(--ink-2);
 }
 /* Themed full-bleed dark section used once per program page */
 .th-dark {
@@ -3648,3 +3645,79 @@ dialog.ps-modal::backdrop { background: rgba(15, 23, 42, 0.55); }
   .pd-hero-specs { margin-top: 32px; }
   .pd-hw th, .pd-hw td { padding-right: 6px; font-size: 0.8125rem; }
 }
+
+/* === de-vibecode pass ===
+   Texture-level discipline: fewer boxes, calmer chips, quieter labels,
+   one H2 hierarchy on program pages. Structural layouts untouched. */
+
+/* -- 1. Month "What you'll learn": chip wall -> editorial separator list */
+.cr-chips { display: block; }
+.cr-chip {
+  display: inline;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  font-size: 0.9375rem;
+  line-height: 1.7;
+  color: var(--ink-2);
+}
+.cr-chip:not(:last-child)::after { content: ' · '; color: var(--ink-3); }
+.cr-more { font-size: 0.8125rem; }
+
+/* -- 2. Chips elsewhere: calm bordered pills at 13px, not filled shouty */
+.ps-skill-chip {
+  background: transparent;
+  border: 1px solid var(--th-soft-2, var(--line));
+  color: var(--ink-2);
+  font-weight: 500;
+  font-size: 0.8125rem;
+  padding: 3px 10px;
+}
+.ps-tag {
+  font-size: 0.8125rem;
+  letter-spacing: 0;
+  text-transform: none;
+  font-weight: 500;
+  padding: 3px 10px;
+  background: transparent;
+  border: 1px solid var(--th-soft-2, var(--line));
+  color: var(--th-accent-ink, var(--ink-2));
+}
+.ps-rail-card [class*='chip'] { background: transparent; border: 0; padding: 0 6px 0 0; font-size: 0.8125rem; color: var(--ink-3); font-weight: 500; }
+
+/* -- 3. Borders -> dividers where they wrapped rows, nodes, days, thumbs */
+.cr-row {
+  border: 0;
+  border-radius: 0;
+  border-bottom: 1px solid var(--line);
+  padding: 12px 14px;
+}
+.cr-row:hover { border-radius: var(--r-sm); }
+.week-day { border: 0; background: transparent; }
+.ps-rail-thumb { border: 0; }
+.project-card .produces::before {
+  font-size: 0.8125rem;
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+/* -- 4. One H2 hierarchy across all program-page sections (was 28 vs 40 mix) */
+.program-detail-page h2,
+.program-detail-page .pd-h2 {
+  font-size: clamp(1.75rem, 2.4vw, 2.25rem);
+  letter-spacing: -0.015em;
+}
+
+/* -- 5. Type floor: last sub-13px survivors in new components */
+.px-gantt-tick { font-size: 0.8125rem; }
+.pd-hw thead th { font-size: 0.8125rem; letter-spacing: 0; }
+
+/* -- 6. Rail cards: lighter treatment (single border, no double frame) */
+.ps-rail-card { border-color: color-mix(in srgb, var(--line) 70%, transparent); }
+
+/* -- 7. Final small-text sweep: word-bearing 12px -> 13px (symbols stay) */
+.pc-progression span, .prog-strip-num, .week-day-label, .px-gantt-role,
+.hv-step-desc, .hv-mock-label, .hv-mock-note, .hv-tag, .footer-tagline,
+.pc-facts dt, .chip { font-size: 0.8125rem; }
+.sig-visual text, .thumb text { font-size: 13px; }
