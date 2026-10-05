@@ -2,6 +2,7 @@ import type { Program } from './types';
 
 export const cybersecurity: Program = {
   slug: 'cybersecurity',
+  signature: 'cyber',
   title: '3-Year Cybersecurity Professional Program',
   shortTitle: 'Cybersecurity',
   cardTitle: 'Cybersecurity',
@@ -18,6 +19,7 @@ export const cybersecurity: Program = {
   weekly: '4 Hours/Week',
   entry: 'Class 10 passed',
   calendar: '52 Weeks/Year · 156 Weeks Total · 208 Hours/Year',
+  nextBatch: 'To be announced', // TODO(owner): replace when the next intake dates are confirmed
   progression: ['Absolute Beginner', 'Beginner', 'Intermediate', 'Advanced', 'Professional / Job-ready'],
   cardChips: ['3 YEARS', '624 HOURS', '4 HRS/WEEK', 'CLASS 10 PASSED'],
   areas: ['Networking & Linux', 'Security Principles', 'SOC Operations', 'Threat Detection', 'Ethical Testing', 'Cloud Security'],
@@ -26,6 +28,19 @@ export const cybersecurity: Program = {
     'Complete beginners with no networking or security background',
     'Students who want structured, lab-based learning with clear professional progression',
     'Anyone aiming for SOC analyst, security analyst, vulnerability management or defensive security roles',
+  ],
+  // Program-page fit lists — fitGood rephrases this program's existing suitableFor items;
+  // fitNot is derived from beforeYouChoose and the notes (no new claims).
+  fitGood: [
+    'You are in or past Class 10 and want to learn how systems are defended, monitored and secured',
+    'You are a complete beginner — no networking or security background is required',
+    'You want structured, lab-based learning with a clear professional progression',
+    'You are aiming at SOC analyst, security analyst, vulnerability management or defensive security roles',
+  ],
+  fitNot: [
+    'You cannot commit four hours a week across 156 weeks',
+    'You are looking for unrestricted offensive practice — every offensive-security activity is performed only against intentionally vulnerable or explicitly authorized systems in controlled lab environments',
+    'You want guaranteed job placement — no internship or placement guarantee is included',
   ],
   beforeYouChoose:
     'This is a 3-year specialization requiring a sustained 4-hour/week learning commitment across 156 weeks. Offensive security work is performed only against intentionally vulnerable or explicitly authorized lab systems — this is a professional, defensive-first program.',
@@ -237,15 +252,16 @@ export const cybersecurity: Program = {
     },
   ],
   projects: [
-    { title: 'Office Network Diagram + Packet Analysis', skills: 'Networking, Wireshark, IPv4, protocols', produces: 'A documented small-office network design with traffic-analysis evidence.', evidence: 'A network diagram plus a sanitized packet-analysis report.' },
-    { title: 'Linux Hardening + Bash Security Toolkit', skills: 'Linux administration, permissions, Bash scripting', produces: 'A hardening checklist and reusable security scripts.', evidence: 'A hardening checklist and security scripts with safe-use notes.' },
-    { title: 'Mini SOC Dashboard + Investigation Report', skills: 'SIEM concepts, log analysis, triage', produces: 'A working SIEM dashboard and a brute-force investigation write-up.', evidence: 'A SIEM dashboard and a written brute-force investigation report.' },
-    { title: 'Enterprise Incident Response Exercise', skills: 'Incident lifecycle, evidence handling, timelines', produces: 'A tabletop incident run end-to-end with a formal IR report.', evidence: 'An incident timeline and a formal post-incident response report.' },
-    { title: 'Authorized Recon & Enumeration Assessment', skills: 'Reconnaissance, enumeration, rules of engagement', produces: 'A scoped, authorized assessment with professional documentation.', evidence: 'A scoped assessment report with rules-of-engagement documentation.' },
-    { title: 'Splunk SOC Investigation Portfolio', skills: 'Splunk searches, dashboards, detection tuning', produces: 'Investigation dashboards and tuned detections from simulated alerts.', evidence: 'Splunk searches, dashboards and tuned detections with investigation write-ups.' },
-    { title: 'Microsoft Sentinel Detection Pack', skills: 'Sentinel, KQL, analytics rules', produces: 'A detection pack with KQL queries and investigation write-ups.', evidence: 'KQL queries, analytics rules and Sentinel investigation notes.' },
-    { title: 'Threat Hunting Report + ATT&CK Coverage Matrix', skills: 'Threat hunting, MITRE ATT&CK, hypothesis-driven work', produces: 'Documented hunts mapped to ATT&CK with coverage-gap analysis.', evidence: 'Hunt write-ups mapped to ATT&CK with coverage-gap analysis.' },
-    { title: 'Final Enterprise Cybersecurity Capstone', skills: 'End-to-end defense: architecture, SOC, detection, response', produces: 'A full enterprise security scenario with sanitized portfolio evidence.', evidence: 'A sanitized enterprise defense scenario with detection, response and reporting evidence.' },
+    // Program-page tags: year + thumb kind (closest of notebook|chart|dashboard|terminal|siem|wireframe|prototype), mapped to the month each project belongs to; featured = final capstone only.
+    { title: 'Office Network Diagram + Packet Analysis', skills: 'Networking, Wireshark, IPv4, protocols', produces: 'A documented small-office network design with traffic-analysis evidence.', evidence: 'A network diagram plus a sanitized packet-analysis report.', year: 1, thumb: 'chart' },
+    { title: 'Linux Hardening + Bash Security Toolkit', skills: 'Linux administration, permissions, Bash scripting', produces: 'A hardening checklist and reusable security scripts.', evidence: 'A hardening checklist and security scripts with safe-use notes.', year: 1, thumb: 'terminal' },
+    { title: 'Mini SOC Dashboard + Investigation Report', skills: 'SIEM concepts, log analysis, triage', produces: 'A working SIEM dashboard and a brute-force investigation write-up.', evidence: 'A SIEM dashboard and a written brute-force investigation report.', year: 1, thumb: 'siem' },
+    { title: 'Enterprise Incident Response Exercise', skills: 'Incident lifecycle, evidence handling, timelines', produces: 'A tabletop incident run end-to-end with a formal IR report.', evidence: 'An incident timeline and a formal post-incident response report.', year: 2, thumb: 'siem' },
+    { title: 'Authorized Recon & Enumeration Assessment', skills: 'Reconnaissance, enumeration, rules of engagement', produces: 'A scoped, authorized assessment with professional documentation.', evidence: 'A scoped assessment report with rules-of-engagement documentation.', year: 2, thumb: 'terminal' },
+    { title: 'Splunk SOC Investigation Portfolio', skills: 'Splunk searches, dashboards, detection tuning', produces: 'Investigation dashboards and tuned detections from simulated alerts.', evidence: 'Splunk searches, dashboards and tuned detections with investigation write-ups.', year: 3, thumb: 'siem' },
+    { title: 'Microsoft Sentinel Detection Pack', skills: 'Sentinel, KQL, analytics rules', produces: 'A detection pack with KQL queries and investigation write-ups.', evidence: 'KQL queries, analytics rules and Sentinel investigation notes.', year: 3, thumb: 'siem' },
+    { title: 'Threat Hunting Report + ATT&CK Coverage Matrix', skills: 'Threat hunting, MITRE ATT&CK, hypothesis-driven work', produces: 'Documented hunts mapped to ATT&CK with coverage-gap analysis.', evidence: 'Hunt write-ups mapped to ATT&CK with coverage-gap analysis.', year: 3, thumb: 'chart' },
+    { title: 'Final Enterprise Cybersecurity Capstone', skills: 'End-to-end defense: architecture, SOC, detection, response', produces: 'A full enterprise security scenario with sanitized portfolio evidence.', evidence: 'A sanitized enterprise defense scenario with detection, response and reporting evidence.', year: 3, thumb: 'siem', featured: true },
   ],
   certifications: [
     { name: 'ISC² Certified in Cybersecurity (CC)', window: 'Month 8', role: 'Foundational readiness — entry-level, no work experience required.' },
@@ -254,6 +270,15 @@ export const cybersecurity: Program = {
     { name: 'CEH v13 (EC-Council)', window: 'Months 18–24', role: 'Ethical hacking — reconnaissance, web security, network testing, exploitation and reporting.', note: 'Owner review: the source roadmap names exam version v13 — reconfirm the current CEH version with EC-Council before publication.' },
     { name: 'CompTIA CySA+', window: 'Months 25–30', role: 'Security operations and analysis readiness.' },
     { name: 'Microsoft Security Operations Analyst Associate (SC-200)', window: 'Months 27–36', role: 'Advanced SOC operations with Sentinel, KQL and Defender XDR.' },
+  ],
+  // Program-page gantt windows mapped from the certifications[].window text ("Months X–Y" → startMonth X, months Y−X+1; 1–36 month scale).
+  certWindows: [
+    { name: 'ISC² Certified in Cybersecurity (CC)', startMonth: 8, months: 1 },
+    { name: 'Google Cybersecurity Professional Certificate', startMonth: 10, months: 3 },
+    { name: 'CompTIA Security+', startMonth: 13, months: 4 },
+    { name: 'CEH v13 (EC-Council)', startMonth: 18, months: 7 },
+    { name: 'CompTIA CySA+', startMonth: 25, months: 6 },
+    { name: 'Microsoft Security Operations Analyst Associate (SC-200)', startMonth: 27, months: 10 },
   ],
   certNote:
     'Certification preparation is embedded in the course; external exams are optional and must be booked with the issuing body. The source roadmap estimates approximately ₹1.14–₹1.35 lakh across the six credentials — costs are approximate and subject to change. Completing the curriculum does not automatically award external certifications.',
@@ -292,6 +317,14 @@ export const cybersecurity: Program = {
     { role: 'Detection Engineering Trainee / Junior', note: 'Detection rules, SIEM content and tuning — possible with the Year-3 detection portfolio.' },
   ],
   hardware: 'Minimum laptop specs: Intel Core i5 / Ryzen 5 or better · 16 GB RAM (32 GB recommended) · 512 GB SSD minimum (1 TB recommended) · integrated graphics sufficient · Windows 11 + VMware/VirtualBox + Linux VMs.',
+  // Program-page spec table — split from the hardware string above; 'recommended' values appear only where the original text states them.
+  hardwareSpecs: [
+    { item: 'Processor', min: 'Intel Core i5 / Ryzen 5 or better' },
+    { item: 'Memory', min: '16 GB RAM', recommended: '32 GB' },
+    { item: 'Storage', min: '512 GB SSD', recommended: '1 TB' },
+    { item: 'Graphics', min: 'Integrated graphics sufficient' },
+    { item: 'OS / Environment', min: 'Windows 11 + VMware/VirtualBox + Linux VMs' },
+  ],
   notes: [
     'All 624 hours include learning, practical labs, hands-on projects, assignments, and the 36 one-hour monthly exams.',
     'The program starts from absolute zero and does not assume prior knowledge of networking, Linux, cybersecurity, or ethical hacking.',

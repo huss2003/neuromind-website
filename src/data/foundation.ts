@@ -2,6 +2,7 @@ import type { Program } from './types';
 
 export const aiFoundation: Program = {
   slug: 'ai-foundation',
+  signature: 'ai',
   title: '1-Year AI Literacy & AI Foundations Professional Foundation Program',
   shortTitle: 'AI Foundations',
   cardTitle: 'AI Literacy & AI Foundations',
@@ -18,6 +19,7 @@ export const aiFoundation: Program = {
   weekly: '2 Hours/Week',
   entry: 'Standard 8',
   calendar: '52 Weeks · 104 One-Hour Lectures',
+  nextBatch: 'To be announced', // TODO(owner): replace when the next intake dates are confirmed
   progression: ['Absolute Beginner', 'AI-Literate', 'AI Builder', 'AI Creator'],
   cardChips: ['104 HOURS', '52 WEEKS', '2 HRS/WEEK', 'STANDARD 8'],
   areas: ['AI Foundations', 'Responsible AI', 'Machine Learning Basics', 'Generative AI & LLMs', 'Prompt Engineering', 'No-Code Automation'],
@@ -26,6 +28,19 @@ export const aiFoundation: Program = {
     'Complete beginners with no programming or technical background',
     'Students who want to understand AI safely and responsibly before specialising',
     'Anyone who wants a structured first year before choosing a longer professional pathway',
+  ],
+  // Program-page fit lists — fitGood rephrases this program's existing suitableFor items;
+  // fitNot is derived from beforeYouChoose, certNote and the roles note (no new claims).
+  fitGood: [
+    'You are in Standard 8 or above and curious about how AI actually works',
+    'You are a complete beginner — no programming or technical background is needed',
+    'You want to understand AI safety, bias and responsible use before you build with it',
+    'You want a structured first year before choosing a longer professional pathway',
+  ],
+  fitNot: [
+    'You want a deep professional specialization now — this is a foundation year, not a substitute for the 3-year programs',
+    'You expect Microsoft AI-901 or AWS AIF-C01 to be awarded by NeuroMind — preparation is included, but the exams are optional, booked with the issuing organisation and carry separate fees',
+    'You are aiming straight at an AI job — the entry-level roles listed expect further professional training and portfolio evidence',
   ],
   beforeYouChoose:
     'This is a foundation program, not a substitute for the 3-year professional specializations. It is designed as a strong starting point — students who complete it are prepared to enter a professional pathway at a confident level.',
@@ -55,16 +70,22 @@ export const aiFoundation: Program = {
     },
   ],
   projects: [
-    { title: 'No-Code AI Classifier', skills: 'Machine learning basics, data, accuracy', produces: 'A working classifier built without code, with an explanation of how it decides.', evidence: 'A documented classifier build with accuracy notes and an explanation of how it decides.' },
-    { title: 'Personal Prompt Library', skills: 'Prompt engineering, evaluation, iteration', produces: 'A curated set of tested prompts with notes on what worked and why.', evidence: 'A curated prompt collection with evaluation notes showing what worked and why.' },
-    { title: 'Study-Buddy RAG Exercise', skills: 'Context engineering, retrieval, grounding, citations', produces: 'An AI assistant grounded in supplied documents with traceable citations.', evidence: 'A grounded Q&A exercise with citations showing how each answer was supported.' },
-    { title: 'Working No-Code AI Agent', skills: 'Automation workflows, agent instructions, guardrails', produces: 'A functional agent built on n8n/Make/Zapier with tested guardrails.', evidence: 'A working agent with written notes on instructions, guardrails and test results.' },
-    { title: 'AI Family Tree + Journal', skills: 'AI history, AI vs ML vs DL vs GenAI, communication', produces: 'A visual map of the AI family and a journal of AI concepts learned.', evidence: 'A visual AI family-tree poster plus a journal of concepts learned.' },
-    { title: 'Creator Capstone + Certification Showcase', skills: 'End-to-end AI project, responsible AI, presentation', produces: 'A complete AI portfolio piece presented alongside AI-901 and AIF-C01 readiness evidence.', evidence: 'A capstone AI project presented with AI-901 and AIF-C01 readiness evidence.' },
+    // Program-page tags: year + thumb kind (closest of notebook|chart|dashboard|terminal|siem|wireframe|prototype); featured = final capstone only.
+    { title: 'No-Code AI Classifier', skills: 'Machine learning basics, data, accuracy', produces: 'A working classifier built without code, with an explanation of how it decides.', evidence: 'A documented classifier build with accuracy notes and an explanation of how it decides.', year: 1, thumb: 'prototype' },
+    { title: 'Personal Prompt Library', skills: 'Prompt engineering, evaluation, iteration', produces: 'A curated set of tested prompts with notes on what worked and why.', evidence: 'A curated prompt collection with evaluation notes showing what worked and why.', year: 1, thumb: 'notebook' },
+    { title: 'Study-Buddy RAG Exercise', skills: 'Context engineering, retrieval, grounding, citations', produces: 'An AI assistant grounded in supplied documents with traceable citations.', evidence: 'A grounded Q&A exercise with citations showing how each answer was supported.', year: 1, thumb: 'prototype' },
+    { title: 'Working No-Code AI Agent', skills: 'Automation workflows, agent instructions, guardrails', produces: 'A functional agent built on n8n/Make/Zapier with tested guardrails.', evidence: 'A working agent with written notes on instructions, guardrails and test results.', year: 1, thumb: 'prototype' },
+    { title: 'AI Family Tree + Journal', skills: 'AI history, AI vs ML vs DL vs GenAI, communication', produces: 'A visual map of the AI family and a journal of AI concepts learned.', evidence: 'A visual AI family-tree poster plus a journal of concepts learned.', year: 1, thumb: 'chart' },
+    { title: 'Creator Capstone + Certification Showcase', skills: 'End-to-end AI project, responsible AI, presentation', produces: 'A complete AI portfolio piece presented alongside AI-901 and AIF-C01 readiness evidence.', evidence: 'A capstone AI project presented with AI-901 and AIF-C01 readiness evidence.', year: 1, thumb: 'prototype', featured: true },
   ],
   certifications: [
     { name: 'Microsoft Azure AI Fundamentals (AI-901)', window: 'Month 11', role: 'Certification preparation built into the Azure AI fundamentals module.' },
     { name: 'AWS Certified AI Practitioner (AIF-C01)', window: 'Month 12', role: 'Certification preparation built into the AWS AI module and graduation showcase.' },
+  ],
+  // Program-page gantt windows — mapped from the certifications[].window text (1–12 month scale).
+  certWindows: [
+    { name: 'Microsoft Azure AI Fundamentals (AI-901)', startMonth: 11, months: 1 },
+    { name: 'AWS Certified AI Practitioner (AIF-C01)', startMonth: 12, months: 1 },
   ],
   certNote:
     'Certification preparation is embedded inside the program. External certification exams are optional, are conducted by the issuing organisation, and carry separate fees. Completing the program does not automatically award external credentials.',

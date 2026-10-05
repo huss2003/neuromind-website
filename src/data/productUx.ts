@@ -2,6 +2,7 @@ import type { Program } from './types';
 
 export const productUx: Program = {
   slug: 'product-ux-ai-design',
+  signature: 'ux',
   title: '3-Year Product & UX / AI Design Professional Program',
   shortTitle: 'Product & UX / AI Design',
   cardTitle: 'Product & UX / AI Design',
@@ -18,6 +19,7 @@ export const productUx: Program = {
   weekly: '4 Hours/Week',
   entry: 'Class 10 passed',
   calendar: '52 Weeks/Year · 156 Weeks Total · 208 Hours/Year',
+  nextBatch: 'To be announced', // TODO(owner): replace when the next intake dates are confirmed
   progression: ['Absolute Beginner', 'Beginner', 'Intermediate', 'Advanced', 'Professional / Job-ready'],
   cardChips: ['3 YEARS', '624 HOURS', '4 HRS/WEEK', 'CLASS 10 PASSED'],
   areas: ['Design Fundamentals', 'UX Research', 'UI & Prototyping', 'Product Management', 'AI Product Design', 'Design Systems'],
@@ -26,6 +28,19 @@ export const productUx: Program = {
     'Complete beginners with no design or product background',
     'Students interested in both classic UX and the emerging field of AI product design',
     'Anyone aiming for UX, UI, product design, AI UX or product management roles',
+  ],
+  // Program-page fit lists — fitGood rephrases this program's existing suitableFor items;
+  // fitNot is derived from beforeYouChoose, the notes and certNote (no new claims).
+  fitGood: [
+    'You are in or past Class 10 and enjoy designing, understanding people and shaping how technology feels to use',
+    'You are a complete beginner — no design or product background is needed',
+    'You are interested in both classic UX and the emerging field of AI product design',
+    'You are aiming at UX, UI, product design, AI UX or product management roles',
+  ],
+  fitNot: [
+    'You cannot commit four hours a week across 36 months',
+    'You want guaranteed placement — no internship guarantee is included',
+    'You want the full certification set at no extra cost — NN/g is optional because it is very expensive, and external exams carry separate fees',
   ],
   beforeYouChoose:
     'This is a 3-year specialization requiring a sustained 4-hour/week learning commitment across 36 months. It starts from absolute zero in design fundamentals and builds toward professional product and AI-design practice.',
@@ -201,15 +216,16 @@ export const productUx: Program = {
     },
   ],
   projects: [
-    { title: 'App Usability Audit', skills: 'UX evaluation, heuristics, evidence', produces: 'A structured audit of a real product with prioritized findings.', evidence: 'A structured audit report with prioritized, evidence-backed findings.' },
-    { title: 'User Research Study + Persona/Journey Map', skills: 'Interviews, surveys, synthesis, personas', produces: 'A research-to-insight case study with artifacts, not just screens.', evidence: 'Research artifacts — interview notes, personas and journey maps, not just screens.' },
-    { title: 'Mobile Wireframe System', skills: 'IA, wireframing, responsive thinking', produces: 'A complete mobile wireframe set with task flows.', evidence: 'A wireframe set with task flows and structural annotations.' },
-    { title: 'Responsive SaaS Dashboard', skills: 'UI design, tables, forms, design QA', produces: 'A responsive product interface built from a design system.', evidence: 'A responsive interface documented with design-rationale notes.' },
-    { title: 'Production-Style Design System', skills: 'Tokens, components, accessibility, handoff', produces: 'A documented, reusable design system with governance notes.', evidence: 'A documented system with tokens, components and governance notes.' },
-    { title: 'AI Assistant UX Prototype', skills: 'AI UX patterns, conversational UI, citations, correction flows', produces: 'A clickable prototype demonstrating uncertainty, citations and human oversight.', evidence: 'A clickable prototype with notes on uncertainty, citations and correction flows.' },
-    { title: 'Enterprise Product Prototype', skills: 'Multi-role workflows, permissions, edge cases', produces: 'An enterprise-style prototype handling complex product scenarios.', evidence: 'A multi-role prototype documenting permissions and edge-case decisions.' },
-    { title: 'AI Design System', skills: 'AI-specific components, prompt patterns, model states, safety', produces: 'A design system purpose-built for AI product interfaces.', evidence: 'An AI-specific system with prompt patterns, model states and safety components.' },
-    { title: 'Flagship AI Product Design Capstone', skills: 'Full discovery → research → UX → UI → AI interaction → testing', produces: 'An end-to-end AI product case study for the professional portfolio.', evidence: 'A full case study: problem, research, design decisions, iteration and outcome.' },
+    // Program-page tags: year + thumb kind (closest of notebook|chart|dashboard|terminal|siem|wireframe|prototype), mapped to the month each project belongs to; featured = final capstone only.
+    { title: 'App Usability Audit', skills: 'UX evaluation, heuristics, evidence', produces: 'A structured audit of a real product with prioritized findings.', evidence: 'A structured audit report with prioritized, evidence-backed findings.', year: 1, thumb: 'wireframe' },
+    { title: 'User Research Study + Persona/Journey Map', skills: 'Interviews, surveys, synthesis, personas', produces: 'A research-to-insight case study with artifacts, not just screens.', evidence: 'Research artifacts — interview notes, personas and journey maps, not just screens.', year: 1, thumb: 'chart' },
+    { title: 'Mobile Wireframe System', skills: 'IA, wireframing, responsive thinking', produces: 'A complete mobile wireframe set with task flows.', evidence: 'A wireframe set with task flows and structural annotations.', year: 1, thumb: 'wireframe' },
+    { title: 'Responsive SaaS Dashboard', skills: 'UI design, tables, forms, design QA', produces: 'A responsive product interface built from a design system.', evidence: 'A responsive interface documented with design-rationale notes.', year: 1, thumb: 'dashboard' },
+    { title: 'Production-Style Design System', skills: 'Tokens, components, accessibility, handoff', produces: 'A documented, reusable design system with governance notes.', evidence: 'A documented system with tokens, components and governance notes.', year: 2, thumb: 'prototype' },
+    { title: 'AI Assistant UX Prototype', skills: 'AI UX patterns, conversational UI, citations, correction flows', produces: 'A clickable prototype demonstrating uncertainty, citations and human oversight.', evidence: 'A clickable prototype with notes on uncertainty, citations and correction flows.', year: 2, thumb: 'prototype' },
+    { title: 'Enterprise Product Prototype', skills: 'Multi-role workflows, permissions, edge cases', produces: 'An enterprise-style prototype handling complex product scenarios.', evidence: 'A multi-role prototype documenting permissions and edge-case decisions.', year: 3, thumb: 'prototype' },
+    { title: 'AI Design System', skills: 'AI-specific components, prompt patterns, model states, safety', produces: 'A design system purpose-built for AI product interfaces.', evidence: 'An AI-specific system with prompt patterns, model states and safety components.', year: 3, thumb: 'prototype' },
+    { title: 'Flagship AI Product Design Capstone', skills: 'Full discovery → research → UX → UI → AI interaction → testing', produces: 'An end-to-end AI product case study for the professional portfolio.', evidence: 'A full case study: problem, research, design decisions, iteration and outcome.', year: 3, thumb: 'prototype', featured: true },
   ],
   certifications: [
     { name: 'IxDF UX Certification', window: 'Months 3–8', role: 'Structured UX fundamentals and practice.' },
@@ -218,6 +234,15 @@ export const productUx: Program = {
     { name: 'Google Project Management Professional Certificate', window: 'Months 13–18', role: 'Project planning, agile methods and delivery.' },
     { name: 'Microsoft AI Product Manager Professional Certificate', window: 'Months 19–27', role: 'AI product thinking, requirements and product lifecycle.' },
     { name: 'NN/g UX Certification', window: 'Months 28–34', role: 'Advanced UX specialization — optional due to high cost.', note: 'The source roadmap identifies NN/g as very expensive (estimated ₹5 lakh+); it is treated as optional.' },
+  ],
+  // Program-page gantt windows mapped from the certifications[].window text ("Months X–Y" → startMonth X, months Y−X+1; 1–36 month scale).
+  certWindows: [
+    { name: 'IxDF UX Certification', startMonth: 3, months: 6 },
+    { name: 'Google UX Design Professional Certificate', startMonth: 6, months: 7 },
+    { name: 'CalArts UI/UX Design Specialization', startMonth: 9, months: 7 },
+    { name: 'Google Project Management Professional Certificate', startMonth: 13, months: 6 },
+    { name: 'Microsoft AI Product Manager Professional Certificate', startMonth: 19, months: 9 },
+    { name: 'NN/g UX Certification', startMonth: 28, months: 7 },
   ],
   certNote:
     'The six external certification paths are embedded as preparation milestones; completing the curriculum does not automatically award the external credentials. The supplied roadmap estimates approximately ₹0.51–₹5.85 lakh overall, largely because of the optional NN/g component. Certification names, providers and pricing should be reconfirmed 3–6 months before each certification window.',
@@ -254,6 +279,15 @@ export const productUx: Program = {
     { role: 'Design Systems Junior / Associate', note: 'Components, tokens and governance — often paired with strong UI engineering collaboration.' },
   ],
   hardware: 'Minimum laptop specs: Intel Core i5 / Ryzen 5 or better · 16 GB RAM · 512 GB SSD · integrated graphics sufficient · 14–16" Full HD, preferably IPS · Windows 11 / macOS.',
+  // Program-page spec table — split from the hardware string above; only stated requirements (the text gives no 'recommended' values).
+  hardwareSpecs: [
+    { item: 'Processor', min: 'Intel Core i5 / Ryzen 5 or better' },
+    { item: 'Memory', min: '16 GB RAM' },
+    { item: 'Storage', min: '512 GB SSD' },
+    { item: 'Graphics', min: 'Integrated graphics sufficient' },
+    { item: 'Display', min: '14–16" Full HD, preferably IPS' },
+    { item: 'OS', min: 'Windows 11 / macOS' },
+  ],
   notes: [
     'All 624 hours include learning, practical work and the 36 one-hour monthly exams.',
     'The program starts from absolute zero and does not assume prior design or product knowledge.',

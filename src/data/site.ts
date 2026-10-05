@@ -51,4 +51,7 @@ export const SITE = {
 
   /** Optional line under the steps. null = nothing renders. */
   responseNote: null as string | null,
+
+  /** Microcopy shown under the CTA rows on program pages (owner-supplied). */
+  counsellingNote: 'Free counselling call — 15 minutes',
 };

@@ -2,6 +2,7 @@ import type { Program } from './types';
 
 export const dataScienceAi: Program = {
   slug: 'data-science-ai',
+  signature: 'ds',
   title: '3-Year Data Science & AI Professional Program',
   shortTitle: 'Data Science & AI',
   cardTitle: 'Data Science & AI',
@@ -18,6 +19,7 @@ export const dataScienceAi: Program = {
   weekly: '4 Hours/Week',
   entry: 'Class 10 passed',
   calendar: '52 Weeks/Year · 156 Weeks Total · 208 Hours/Year',
+  nextBatch: 'To be announced', // TODO(owner): replace when the next intake dates are confirmed
   progression: ['Absolute Beginner', 'Beginner', 'Intermediate', 'Advanced', 'Professional / Job-ready'],
   cardChips: ['3 YEARS', '624 HOURS', '4 HRS/WEEK', 'CLASS 10 PASSED'],
   areas: ['Python & SQL', 'Statistics', 'Machine Learning', 'Data Engineering', 'Deep Learning & NLP', 'Generative AI & MLOps'],
@@ -26,6 +28,19 @@ export const dataScienceAi: Program = {
     'Complete beginners who want to start from computing fundamentals, not assumed knowledge',
     'Students who prefer learning through practical work, projects and portfolio evidence',
     'Anyone aiming for data analyst, data science, data engineering or ML-oriented roles',
+  ],
+  // Program-page fit lists — fitGood rephrases this program's existing suitableFor items;
+  // fitNot is derived from beforeYouChoose and the notes (no new claims).
+  fitGood: [
+    'You are in or past Class 10 and want a structured, long-term specialization in data and AI',
+    'You want Python, SQL, statistics and machine learning taught from absolute zero',
+    'You learn best through practical work, projects and portfolio evidence',
+    'You are aiming at data analyst, data science, data engineering or ML-oriented roles',
+  ],
+  fitNot: [
+    'You cannot commit four hours a week across 156 weeks — the pace is structured, not rushed',
+    'You want guaranteed job placement — no internship or placement guarantee is included',
+    'You want to skip the fundamentals and start with advanced AI — Year 1 builds computing, Python, SQL and statistics first',
   ],
   beforeYouChoose:
     'This is a 3-year specialization requiring a sustained 4-hour/week learning commitment across 156 weeks. It starts from absolute zero and builds steadily — the pace is structured, not rushed.',
@@ -237,15 +252,16 @@ export const dataScienceAi: Program = {
     },
   ],
   projects: [
-    { title: 'Python Data Utilities Pack', skills: 'Python, functions, files, CSV/JSON', produces: 'Reusable data-cleaning scripts and a documented Python repository.', evidence: 'A GitHub repository of reusable data-cleaning scripts with README documentation.' },
-    { title: 'SQL Analytics Repository', skills: 'SQL, joins, subqueries, aggregation', produces: 'A repository of solved SQL analysis tasks against a created database.', evidence: 'A repository of SQL solutions with queries, results and short analysis notes.' },
-    { title: 'End-to-End EDA Project', skills: 'Exploratory analysis, visualization, data quality', produces: 'A complete EDA workflow across multiple datasets with findings documented.', evidence: 'An EDA report covering datasets, findings, visuals and data-quality decisions.' },
-    { title: 'Analytics Dashboard', skills: 'Dashboard design, data models, storytelling', produces: 'An interactive dashboard built from a real analytical dataset.', evidence: 'An interactive dashboard with documented data model and analytical narrative.' },
-    { title: 'Classification System', skills: 'Classification, ensembles, model tuning', produces: 'Tuned classification models with evaluation evidence.', evidence: 'Trained classification models with evaluation metrics and error analysis.' },
-    { title: 'Production ML API', skills: 'ML deployment, APIs, model monitoring', produces: 'A deployed model API with basic monitoring.', evidence: 'A deployed model API with monitoring notes and usage documentation.' },
-    { title: 'RAG Application', skills: 'LLMs, embeddings, vector search, RAG', produces: 'A source-grounded data assistant with evaluation.', evidence: 'A source-grounded data assistant with citations and evaluation results.' },
-    { title: 'MLOps Pipeline', skills: 'CI/CD for ML, monitoring, drift, retraining', produces: 'A complete MLOps workflow for model lifecycle management.', evidence: 'A CI/CD-for-ML workflow with monitoring and retraining documentation.' },
-    { title: 'Final Data Science & AI Capstone', skills: 'End-to-end problem → pipeline → ML → deployment', produces: 'A production-style data/AI solution presented as professional portfolio evidence.', evidence: 'An end-to-end solution covering problem, data, method, evaluation and deployment.' },
+    // Program-page tags: year + thumb kind (closest of notebook|chart|dashboard|terminal|siem|wireframe|prototype), mapped to the month each project belongs to; featured = final capstone only.
+    { title: 'Python Data Utilities Pack', skills: 'Python, functions, files, CSV/JSON', produces: 'Reusable data-cleaning scripts and a documented Python repository.', evidence: 'A GitHub repository of reusable data-cleaning scripts with README documentation.', year: 1, thumb: 'notebook' },
+    { title: 'SQL Analytics Repository', skills: 'SQL, joins, subqueries, aggregation', produces: 'A repository of solved SQL analysis tasks against a created database.', evidence: 'A repository of SQL solutions with queries, results and short analysis notes.', year: 1, thumb: 'terminal' },
+    { title: 'End-to-End EDA Project', skills: 'Exploratory analysis, visualization, data quality', produces: 'A complete EDA workflow across multiple datasets with findings documented.', evidence: 'An EDA report covering datasets, findings, visuals and data-quality decisions.', year: 1, thumb: 'chart' },
+    { title: 'Analytics Dashboard', skills: 'Dashboard design, data models, storytelling', produces: 'An interactive dashboard built from a real analytical dataset.', evidence: 'An interactive dashboard with documented data model and analytical narrative.', year: 1, thumb: 'dashboard' },
+    { title: 'Classification System', skills: 'Classification, ensembles, model tuning', produces: 'Tuned classification models with evaluation evidence.', evidence: 'Trained classification models with evaluation metrics and error analysis.', year: 2, thumb: 'notebook' },
+    { title: 'Production ML API', skills: 'ML deployment, APIs, model monitoring', produces: 'A deployed model API with basic monitoring.', evidence: 'A deployed model API with monitoring notes and usage documentation.', year: 2, thumb: 'terminal' },
+    { title: 'RAG Application', skills: 'LLMs, embeddings, vector search, RAG', produces: 'A source-grounded data assistant with evaluation.', evidence: 'A source-grounded data assistant with citations and evaluation results.', year: 3, thumb: 'prototype' },
+    { title: 'MLOps Pipeline', skills: 'CI/CD for ML, monitoring, drift, retraining', produces: 'A complete MLOps workflow for model lifecycle management.', evidence: 'A CI/CD-for-ML workflow with monitoring and retraining documentation.', year: 3, thumb: 'terminal' },
+    { title: 'Final Data Science & AI Capstone', skills: 'End-to-end problem → pipeline → ML → deployment', produces: 'A production-style data/AI solution presented as professional portfolio evidence.', evidence: 'An end-to-end solution covering problem, data, method, evaluation and deployment.', year: 3, thumb: 'prototype', featured: true },
   ],
   certifications: [
     { name: 'Microsoft Certified: Azure Data Fundamentals (DP-900)', window: 'Months 1–12', role: 'Cloud/data foundation.' },
@@ -254,6 +270,16 @@ export const dataScienceAi: Program = {
     { name: 'IBM Data Science Professional Certificate', window: 'Months 13–22', role: 'Applied Python, SQL and ML.' },
     { name: 'Microsoft Certified: Azure Data Scientist Associate (DP-100)', window: 'Months 20–24', role: 'Applied ML on Azure.' },
     { name: 'IBM Data Engineering Professional Certificate', window: 'Months 18–24', role: 'ETL, pipelines and data engineering.' },
+  ],
+  // Program-page gantt windows mapped from the certifications[].window text ("Months X–Y" → startMonth X, months Y−X+1; 1–36 month scale).
+  certWindows: [
+    { name: 'Microsoft Certified: Azure Data Fundamentals (DP-900)', startMonth: 1, months: 12 },
+    // mock: the window text reads "Months 2–3 and 13–14" — a single gantt bar cannot show both; first window shown. Verify with owner.
+    { name: 'HackerRank SQL / Python Certificate', startMonth: 2, months: 2 },
+    { name: 'Google Data Analytics Professional Certificate', startMonth: 7, months: 6 },
+    { name: 'IBM Data Science Professional Certificate', startMonth: 13, months: 10 },
+    { name: 'Microsoft Certified: Azure Data Scientist Associate (DP-100)', startMonth: 20, months: 5 },
+    { name: 'IBM Data Engineering Professional Certificate', startMonth: 18, months: 7 },
   ],
   certNote:
     'Certification preparation is embedded into the technical modules; external attempts are optional. Completing the curriculum does not automatically award external credentials. Certification fees, cloud costs and third-party pricing are approximate and subject to change.',
@@ -292,6 +318,15 @@ export const dataScienceAi: Program = {
     { role: 'Junior MLOps Engineer', note: 'ML deployment and monitoring — possible; experience-dependent.' },
   ],
   hardware: 'Minimum laptop specs: Intel Core i7 / Ryzen 7 · 32 GB RAM · 1 TB NVMe SSD · NVIDIA RTX 4060/5060 (8 GB VRAM+) · 14–16" FHD/2K IPS · Windows 11 + WSL2/Linux.',
+  // Program-page spec table — split from the hardware string above; only stated requirements (the text gives no 'recommended' values).
+  hardwareSpecs: [
+    { item: 'Processor', min: 'Intel Core i7 / Ryzen 7' },
+    { item: 'Memory', min: '32 GB RAM' },
+    { item: 'Storage', min: '1 TB NVMe SSD' },
+    { item: 'Graphics', min: 'NVIDIA RTX 4060/5060 (8 GB VRAM+)' },
+    { item: 'Display', min: '14–16" FHD/2K IPS' },
+    { item: 'OS / Environment', min: 'Windows 11 + WSL2/Linux' },
+  ],
   notes: [
     'All 624 hours include learning, practical work, projects, assignments, and the 36 one-hour monthly exams.',
     'The program starts from absolute zero and does not assume prior knowledge of programming, statistics, data science, or AI/ML. Basic 10th-grade math knowledge is expected.',

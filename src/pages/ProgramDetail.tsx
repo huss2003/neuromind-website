@@ -1,30 +1,63 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useReveal } from '../hooks/useReveal';
 import { usePageMeta } from '../hooks/usePageMeta';
-import { getProgram, programs } from '../data';
+import { getProgram, programs, type Program } from '../data';
+import { SITE } from '../data/site';
 import Accordion from '../components/Accordion';
-import CtaSection from '../components/CtaSection';
-import NotFound from './NotFound';
+import SectionHead from '../components/SectionHead';
+import CurriculumRoadmap from '../components/CurriculumRoadmap';
+import {
+  FAQSplit,
+  ProjectFeatured,
+  ProjectRail,
+  ProgressionTrack,
+  SpecStrip,
+  TabbedSkillsRoles,
+} from '../components/ProgramSections';
+import { CertGantt, PortfolioStairs } from '../components/program-extras';
+import { SignatureVisual } from '../components/program-visuals';
 import { ArrowRight, Check } from '../components/Icons';
+import NotFound from './NotFound';
 
-// Labels for the decorative week rail (session days are illustrative).
+/* Labels for the decorative week rail (session days are illustrative). */
 const DAY_LABELS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+
+const SUBNAV = [
+  { id: 'overview', label: 'Overview' },
+  { id: 'fit', label: 'Fit' },
+  { id: 'curriculum', label: 'Curriculum' },
+  { id: 'projects', label: 'Projects' },
+  { id: 'certifications', label: 'Certifications' },
+  { id: 'faq', label: 'FAQ' },
+];
+
+/* Fixed learning loop — the assessment band renders these as a step flow. */
+const ASSESS_FLOW = ['Learn', 'Practice', 'Build', 'Assess', 'Document'];
+
+type RoleTiers = { strong: string[]; possible: string[] };
+
+/** Description lead: bold the first clause (before an em dash) or the first sentence. */
+function splitLead(text: string): [string, string] {
+  const dash = text.indexOf('\u2014');
+  if (dash > 0) return [text.slice(0, dash).trim(), ` ${text.slice(dash)}`];
+  const stop = text.search(/\.\s/);
+  if (stop > 0) return [text.slice(0, stop + 1), text.slice(stop + 1)];
+  return [text, ''];
+}
 
 export default function ProgramDetail() {
   const { slug } = useParams<{ slug: string }>();
   const program = slug ? getProgram(slug) : undefined;
-  const [openYear, setOpenYear] = useState<number>(1);
   const [activeSection, setActiveSection] = useState('overview');
+  const [pastHero, setPastHero] = useState(false);
+  const heroRef = useRef<HTMLElement | null>(null);
   useReveal();
 
+  // Sticky sub-nav — track which section is in view (underline + aria-current).
   useEffect(() => {
-    setOpenYear(1);
-  }, [slug]);
-
-  // Sticky "on this page" nav — track which section is in view
-  useEffect(() => {
-    const ids = ['overview', 'for-you', 'curriculum', 'projects', 'certification', 'faq'];
+    setActiveSection('overview');
+    setPastHero(false);
     const io = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -33,10 +66,19 @@ export default function ProgramDetail() {
       },
       { rootMargin: '-25% 0px -60% 0px' },
     );
-    ids.forEach((id) => {
-      const el = document.getElementById(id);
+    SUBNAV.forEach((s) => {
+      const el = document.getElementById(s.id);
       if (el) io.observe(el);
     });
+    return () => io.disconnect();
+  }, [slug]);
+
+  // The sub-nav CTA appears only once the hero has scrolled fully out of view.
+  useEffect(() => {
+    const el = heroRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([entry]) => setPastHero(!entry.isIntersecting));
+    io.observe(el);
     return () => io.disconnect();
   }, [slug]);
 
@@ -77,74 +119,96 @@ export default function ProgramDetail() {
   // Illustrative slots for the decorative week rail.
   const sessionDays = sessions === 1 ? [2] : [1, 4];
 
+  const [leadStrong, leadRest] = splitLead(program.description);
+  const isFoundation = program.category === 'foundation';
+  const assessGlance = isFoundation ? 'Major-topic exams' : 'Monthly exams (theory + practical)';
+  const assessLine = isFoundation
+    ? 'Major-topic examinations + capstone'
+    : 'Monthly examinations: theory + practical';
+
+  const featured =
+    program.projects.find((p) => p.featured) ?? program.projects[program.projects.length - 1];
+  const railProjects = program.projects.filter((p) => p !== featured);
+
+  // roleTiers is optional program data (falls back to the roles list inside the component).
+  const roleTiers = (program as Program & { roleTiers?: RoleTiers }).roleTiers;
+
+  // Amber callout: the certNote (or the neutral fallback) plus the fee line only
+  // when the note does not already say where fees are paid.
+  const certFeeLine = /(issuing (organisation|organization|body)|booked with|separate fees)/i.test(
+    program.certNote ?? '',
+  )
+    ? null
+    : 'Exam fees are paid to the certification provider.';
+
+  // Condensed cost note for "Before you start" — existing wording, first sentence only.
+  const costNote = program.notes.find((n) => /cost|fees|pricing/i.test(n));
+  const costLine = costNote
+    ? (costNote.match(/^.*?\.(?=\s|$)/)?.[0] ?? costNote)
+    : undefined;
+
+  const glance = [
+    { label: 'Program type', value: isFoundation ? '1-Year Foundation' : '3-Year Specialization' },
+    { label: 'Entry', value: program.entry },
+    { label: 'Duration', value: program.duration },
+    { label: 'Weekly commitment', value: program.weekly },
+    { label: 'Total hours', value: program.hours },
+    { label: 'Assessment', value: assessGlance },
+    { label: 'Certification prep', value: `${program.certifications.length} external roadmaps` },
+  ];
+
   return (
-    <div className="program-detail-page" style={accentStyle}>
-      {/* HERO */}
-      <section className="page-hero">
+    <div className="program-detail-page" data-th={program.signature} style={accentStyle}>
+      {/* 1. HERO */}
+      <section className="pd-hero" id="hero" ref={heroRef}>
         <div className="container">
-          <nav className="breadcrumb" aria-label="Breadcrumb">
-            <a href="/">Home</a>
-            <span className="sep" aria-hidden="true">/</span>
-            <a href="/programs">Programs</a>
+          <nav className="breadcrumb pd-crumb mono-label" aria-label="Breadcrumb">
+            <Link to="/programs">Programs</Link>
             <span className="sep" aria-hidden="true">/</span>
             <span aria-current="page">{program.shortTitle}</span>
           </nav>
 
-          <span className="eyebrow">{program.category === 'foundation' ? 'Foundation Program' : 'Professional Program'}</span>
-          <h1>{program.title}</h1>
-          <p className="hero-sub">{program.tagline}</p>
-
-          <div className="detail-facts">
-            <div className="detail-fact">
-              <span className="df-val">{program.hours.replace(' Hours', '')}</span>
-              <span className="df-lab">Total Hours</span>
+          <div className="pd-hero-grid">
+            <div className="pd-hero-lead">
+              <h1>{program.title}</h1>
+              <p className="pd-hero-tag">{program.tagline}</p>
+              <div className="pd-hero-actions">
+                <Link to={`/contact?program=${program.slug}`} className="btn btn-primary">
+                  Talk to us <ArrowRight />
+                </Link>
+                <a href="#curriculum" className="btn btn-secondary">
+                  View curriculum
+                </a>
+              </div>
+              <p className="pd-micro">{SITE.counsellingNote}</p>
             </div>
-            <div className="detail-fact">
-              <span className="df-val">{program.duration.split('·')[0].trim()}</span>
-              <span className="df-lab">Duration</span>
-            </div>
-            <div className="detail-fact">
-              <span className="df-val">{program.weekly.replace(' Hours/Week', ' hrs/wk')}</span>
-              <span className="df-lab">Weekly Commitment</span>
-            </div>
-            <div className="detail-fact">
-              <span className="df-val">{program.entry}</span>
-              <span className="df-lab">Entry Level</span>
+            <div className="pd-hero-visual">
+              <SignatureVisual variant={program.signature} />
             </div>
           </div>
 
-          <div className="detail-progression">
-            <span className="dp-label">Progression:</span>
-            {program.progression.map((stage, i) => (
-              <span key={stage} style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                {i > 0 && <span className="dp-arrow" aria-hidden="true">→</span>}
-                <span className="dp-stage">{stage}</span>
-              </span>
-            ))}
+          <div className="pd-hero-specs">
+            <SpecStrip
+              items={[
+                { label: 'Duration', value: program.duration },
+                { label: 'Total hours', value: program.hours },
+                { label: 'Weekly commitment', value: program.weekly },
+                { label: 'Entry level', value: program.entry },
+                { label: 'Next batch', value: program.nextBatch },
+              ]}
+            />
           </div>
 
-          <div className="hero-actions" style={{ marginTop: 28, marginBottom: 0 }}>
-            <a href="#curriculum" className="btn btn-primary">
-              Explore Curriculum <ArrowRight />
-            </a>
-            <Link to={`/contact?program=${program.slug}`} className="btn btn-secondary">
-              Talk to NeuroMind
-            </Link>
+          <div className="pd-hero-track">
+            <ProgressionTrack steps={program.progression} />
           </div>
         </div>
       </section>
 
-      {/* ON THIS PAGE */}
+      {/* 2. STICKY SUB-NAV */}
       <nav className="section-nav" aria-label="On this page">
         <div className="container section-nav-inner">
-          {[
-            { id: 'overview', label: 'Overview' },
-            { id: 'for-you', label: 'Is It For You?' },
-            { id: 'curriculum', label: 'Curriculum' },
-            { id: 'projects', label: 'Projects' },
-            { id: 'certification', label: 'Certification' },
-            { id: 'faq', label: 'FAQ' },
-          ].map((s) => (
+          {SUBNAV.map((s) => (
             <a
               key={s.id}
               href={`#${s.id}`}
@@ -154,23 +218,244 @@ export default function ProgramDetail() {
               {s.label}
             </a>
           ))}
-          <Link to={`/contact?program=${program.slug}`} className="section-nav-cta">
-            Ask a Question
-          </Link>
+          {pastHero && (
+            <Link to={`/contact?program=${program.slug}`} className="section-nav-cta">
+              Talk to us
+            </Link>
+          )}
         </div>
       </nav>
 
-      {/* A TYPICAL WEEK — illustrative rhythm; hours derive from the program data */}
-      {sessions > 0 && (
-        <section className="week-section" aria-labelledby="typical-week-title">
-          <div className="container">
-            <div className="week-strip reveal">
+      {/* 3. OVERVIEW */}
+      <section className="section" id="overview">
+        <div className="container">
+          <h2 className="pd-h2">Overview</h2>
+          <div className="pd-overview">
+            <p className="pd-lead">
+              <strong>{leadStrong}</strong>
+              {leadRest}
+            </p>
+            <div className="pd-glance">
+              <p className="mono-label pd-glance-title">At a glance</p>
+              <dl className="pd-glance-list">
+                {glance.map((g) => (
+                  <div key={g.label} className="pd-glance-row">
+                    <dt className="mono-label">{g.label}</dt>
+                    <dd>{g.value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 4. FIT */}
+      <section className="section" id="fit">
+        <div className="container">
+          <h2 className="pd-h2">Is this program for you?</h2>
+          <div className="pd-fit">
+            <div>
+              <h3>A good fit if&hellip;</h3>
+              <ul className="pd-fit-list">
+                {program.fitGood.map((item) => (
+                  <li key={item}>
+                    <span className="pd-fit-ic" aria-hidden="true">
+                      <Check />
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div>
+              <h3>Probably not for you if&hellip;</h3>
+              <ul className="pd-fit-list">
+                {program.fitNot.map((item) => (
+                  <li key={item}>
+                    <span className="pd-fit-dash" aria-hidden="true" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
+          <p className="pd-reassure">{program.whereYouStart}</p>
+        </div>
+      </section>
+
+      {/* 5. CURRICULUM */}
+      <section className="section" id="curriculum">
+        <div className="container">
+          <SectionHead
+            eyebrow="Curriculum"
+            title="Year-by-year roadmap"
+            sub={
+              program.years.length === 1
+                ? 'Twelve months, mapped month by month.'
+                : 'Thirty-six months, mapped year by year.'
+            }
+          />
+          <CurriculumRoadmap years={program.years} programTitle={program.shortTitle} />
+        </div>
+      </section>
+
+      {/* 6. PROJECTS */}
+      <section className="section" id="projects">
+        <div className="container">
+          <h2 className="pd-h2">Hands-on projects</h2>
+          {featured && (
+            <ProjectFeatured
+              project={featured}
+              kicker={'Capstone · Year ' + (featured.year ?? 3)}
+            />
+          )}
+          {railProjects.length > 0 && (
+            <div className="pd-rail-block">
+              <p className="mono-label pd-rail-label">Earlier projects</p>
+              <ProjectRail projects={railProjects} />
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* 7. ASSESSMENT STRIP */}
+      <section className="pd-band" id="assess">
+        <div className="container">
+          <div className="pd-assess">
+            <span className="mono-label">How you&rsquo;re assessed</span>
+            <ol className="pd-flow">
+              {ASSESS_FLOW.map((step, i) => (
+                <li key={step} className="pd-flow-step">
+                  {i > 0 && (
+                    <span className="pd-flow-arrow" aria-hidden="true">
+                      &rarr;
+                    </span>
+                  )}
+                  <span className="pd-flow-n mono-label">{String(i + 1).padStart(2, '0')}</span>
+                  {step}
+                </li>
+              ))}
+            </ol>
+            <p className="pd-assess-note">{assessLine}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* 8. CERTIFICATIONS */}
+      <section className="section" id="certifications">
+        <div className="container">
+          <SectionHead eyebrow="Certifications" title="Certification preparation" />
+          <CertGantt
+            certs={program.certifications.map((c) => ({ name: c.name, role: c.role }))}
+            certWindows={program.certWindows}
+            totalMonths={program.years.length * 12 || 12}
+          />
+          <div className="pd-callout reveal">
+            <p>{program.certNote ?? 'External certification is optional and not awarded by NeuroMind.'}</p>
+            {certFeeLine && <p className="pd-callout-fee">{certFeeLine}</p>}
+          </div>
+        </div>
+      </section>
+
+      {/* 9. PORTFOLIO GROWTH */}
+      <section className="section" id="portfolio">
+        <div className="container">
+          <h2 className="pd-h2">Your portfolio, built over time</h2>
+          <PortfolioStairs journey={program.portfolioJourney} />
+        </div>
+      </section>
+
+      {/* 10. SKILLS & CAREER */}
+      <section className="section" id="skills">
+        <div className="container">
+          <SectionHead eyebrow="Skills & career" title="What you&rsquo;ll be able to do" />
+          <TabbedSkillsRoles
+            skills={program.skills}
+            roles={program.roles}
+            roleTiers={roleTiers}
+          />
+        </div>
+      </section>
+
+      {/* 11. BEFORE YOU START */}
+      <section className="section" id="before">
+        <div className="container">
+          <h2 className="pd-h2">Before you start</h2>
+          <div className="pd-before">
+            <ul className="pd-reqs">
+              <li>
+                <span className="pd-fit-ic" aria-hidden="true">
+                  <Check />
+                </span>
+                <span>
+                  <b>Entry &middot; </b>
+                  {program.entry}
+                </span>
+              </li>
+              <li>
+                <span className="pd-fit-ic" aria-hidden="true">
+                  <Check />
+                </span>
+                <span>
+                  <b>Schedule &middot; </b>
+                  {program.calendar}
+                </span>
+              </li>
+              {!program.hardwareSpecs && program.hardware && (
+                <li>
+                  <span className="pd-fit-ic" aria-hidden="true">
+                    <Check />
+                  </span>
+                  <span>
+                    <b>Hardware &middot; </b>
+                    {program.hardware}
+                  </span>
+                </li>
+              )}
+              {costLine && (
+                <li>
+                  <span className="pd-fit-dash" aria-hidden="true" />
+                  <span>
+                    <b>Extra costs &middot; </b>
+                    {costLine}
+                  </span>
+                </li>
+              )}
+            </ul>
+
+            {program.hardwareSpecs && (
+              <div className="pd-hw">
+                <p className="mono-label">Laptop requirements</p>
+                <table>
+                  <thead>
+                    <tr>
+                      <th scope="col">Item</th>
+                      <th scope="col">Minimum</th>
+                      <th scope="col">Recommended</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {program.hardwareSpecs.map((s) => (
+                      <tr key={s.item}>
+                        <th scope="row">{s.item}</th>
+                        <td>{s.min}</td>
+                        <td>{s.recommended ?? '—'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+
+          {/* A typical week — illustrative rhythm; hours derive from the program data */}
+          {sessions > 0 && (
+            <div className="week-strip reveal pd-week">
               <div className="week-strip-head">
                 <div>
-                  <span className="eyebrow">A Typical Week</span>
-                  <h2 id="typical-week-title" className="week-strip-title">
-                    {weeklyHours} hours per week
-                  </h2>
+                  <p className="mono-label pd-week-label">A typical week</p>
+                  <h3 className="week-strip-title">{weeklyHours} hours per week</h3>
                 </div>
                 <p className="week-strip-meta">
                   <strong>
@@ -183,455 +468,84 @@ export default function ProgramDetail() {
                 {DAY_LABELS.map((day, i) => (
                   <div key={day} className={`week-day${sessionDays.includes(i) ? ' on' : ''}`}>
                     <span className="week-day-label">{day}</span>
-                    <span className="week-day-slot">{sessionDays.includes(i) ? `${hoursPerSession}h` : ''}</span>
+                    <span className="week-day-slot">
+                      {sessionDays.includes(i) ? `${hoursPerSession}h` : ''}
+                    </span>
                   </div>
                 ))}
               </div>
               <p className="week-note">Illustrative — actual timings depend on batch schedule</p>
             </div>
-          </div>
-        </section>
-      )}
+          )}
 
-      {/* DESCRIPTION */}
-      <section className="section-tight" id="overview">
-        <div className="container container-narrow">
-          <p className="reveal" style={{ fontSize: '1.0625rem', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-            {program.description}
-          </p>
-        </div>
-      </section>
-
-      {/* IS THIS FOR YOU */}
-      <section className="section bg-soft" id="for-you">
-        <div className="container">
-          <div className="fit-grid">
-            <div className="reveal">
-              <span className="eyebrow">Is This Program For You?</span>
-              <h2 className="section-title" style={{ marginBottom: 24 }}>This program may be suitable if you:</h2>
-              <ul className="fit-list">
-                {program.suitableFor.map((item) => (
-                  <li key={item}>
-                    <span className="check" aria-hidden="true"><Check /></span>
-                    {item}
-                  </li>
+          <div className="pd-notes-acc">
+            <Accordion
+              title={
+                <>
+                  <strong>Program notes</strong>
+                  <span className="chip" style={{ marginLeft: 8 }}>
+                    {program.notes.length}
+                  </span>
+                </>
+              }
+            >
+              <ul className="pd-notes">
+                {program.notes.map((note) => (
+                  <li key={note}>{note}</li>
                 ))}
               </ul>
+            </Accordion>
+          </div>
+        </div>
+      </section>
+
+      {/* 12. FAQ */}
+      <section className="section" id="faq">
+        <div className="container">
+          <h2 className="pd-h2">Common questions</h2>
+          <FAQSplit
+            faqs={program.faqs.slice(0, 6)}
+            contactHref={`/contact?program=${program.slug}`}
+          />
+        </div>
+      </section>
+
+      {/* 13. FINAL CTA */}
+      <section className="pd-cta" id="cta">
+        <div className="pd-cta-band">
+          <div className="container pd-cta-inner">
+            <div className="pd-cta-copy">
+              <h2>Ready to start {program.shortTitle}?</h2>
+              <div className="pd-hero-actions">
+                <Link to={`/contact?program=${program.slug}`} className="btn btn-primary">
+                  Talk to us <ArrowRight />
+                </Link>
+                <a href="#curriculum" className="btn btn-secondary">
+                  View curriculum
+                </a>
+              </div>
+              <p className="pd-micro">{SITE.counsellingNote}</p>
             </div>
-            <div className="reveal reveal-d2">
-              <div className="fit-note">
-                <div className="accent-bar" aria-hidden="true" />
-                <h3>Before you choose</h3>
-                <p style={{ marginBottom: 16 }}>{program.beforeYouChoose}</p>
-                <h3 style={{ marginTop: 20 }}>Where you start</h3>
-                <p>{program.whereYouStart}</p>
-              </div>
-            </div>
+            <SignatureVisual variant={program.signature} className="pd-cta-visual" />
           </div>
         </div>
-      </section>
-
-      {/* WHERE YOU PROGRESS */}
-      <section className="section">
-        <div className="container container-narrow" style={{ textAlign: 'center' }}>
-          <div className="reveal">
-            <span className="eyebrow" style={{ justifyContent: 'center' }}>Where You Progress</span>
-            <h2 className="section-title">By the end of this program, you will be at:</h2>
-            <div className="prog-strip reveal" style={{ marginTop: 32, maxWidth: 720, marginInline: 'auto' }}>
-              {program.progression.map((stage, i) => {
-                const colors = ['#2563EB', '#7C3AED', '#06B6D4', '#10B981', '#F59E0B'];
-                return (
-                  <div key={stage} className="prog-strip-step" style={{ ['--strip-color' as string]: colors[i % 5] }}>
-                    <div className="prog-strip-num">{String(i + 1).padStart(2, '0')}</div>
-                    <div className="prog-strip-label">{stage}</div>
-                  </div>
-                );
-              })}
-            </div>
-            <p className="section-sub reveal" style={{ marginTop: 28, maxWidth: 560, marginInline: 'auto' }}>
-              {program.whereYouProgress}
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* CURRICULUM */}
-      <section className="section bg-soft" id="curriculum">
-        <div className="container">
-          <div className="section-head reveal">
-            <span className="eyebrow">Curriculum</span>
-            <h2 className="section-title">Year-by-year journey</h2>
-            <p className="section-sub">
-              {program.years.length === 1
-                ? 'A structured 12-month journey through the complete curriculum.'
-                : `A structured ${program.years.length}-year journey. Expand each year to see the month-by-month curriculum.`}
-            </p>
-          </div>
-
-          {/* Factual year-by-year timeline — hours and themes derive from the curriculum data */}
-          <ol className="year-timeline reveal" aria-label="Year-by-year timeline">
-            {program.years.map((year) => {
-              const yearHours = year.months.reduce((s, m) => s + (m.hours ?? 0), 0);
-              // ponytail: themes split from year.focus text; promote to a data field if a year summary ever lacks a comma list
-              const themes = year.focus
-                .split('—')[0]
-                .split(/,| and /)
-                .map((t) => t.trim().replace(/\.$/, ''))
-                .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
-                .filter((t) => t.length > 2)
-                .slice(0, 4);
-              return (
-                <li key={year.n} className="year-tl-step">
-                  <span className="year-tl-marker" aria-hidden="true">{year.n}</span>
-                  <div className="year-tl-card">
-                    <div className="year-tl-head">
-                      <strong className="year-tl-title">Year {year.n} — {year.label}</strong>
-                      <span className="year-tl-hours">{yearHours} hours</span>
-                    </div>
-                    <ul className="year-tl-themes">
-                      {themes.map((t) => (
-                        <li key={t}>{t}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
-
-          <div className="year-glance-grid">
-            {program.years.map((year) => (
-              <div key={year.n} className="year-glance">
-                <div className="yg-head">
-                  <strong>
-                    Year {year.n} — {year.label}
-                  </strong>
-                  <span className="chip">
-                    {year.months.length} Months · {year.months.reduce((s, m) => s + (m.hours ?? 0), 0)} Hours
-                  </span>
-                </div>
-                <p className="yg-focus">{year.focus}</p>
-                <p className="yg-topics">{year.months.map((m) => m.title).join(' · ')}</p>
-              </div>
-            ))}
-          </div>
-
-          <div className="accordion">
-            {program.years.map((year) => (
-              <Accordion
-                key={year.n}
-                defaultOpen={year.n === openYear}
-                title={
-                  <>
-                    <strong style={{ fontFamily: 'var(--font-head)', fontSize: '1.0625rem' }}>
-                      Year {year.n} — {year.label}
-                    </strong>
-                  </>
-                }
-                meta={
-                  <span className="chip" style={{ marginLeft: 8 }}>
-                    {year.months.length} Months · {year.months.reduce((s, m) => s + (m.hours ?? 0), 0)} Hours
-                  </span>
-                }
-                onOpenChange={(open) => open && setOpenYear(year.n)}
-              >
-                <p style={{ fontSize: '0.9375rem', color: 'var(--ink-3)', marginBottom: 16, lineHeight: 1.6 }}>
-                  {year.focus}
-                </p>
-                <div className="month-list">
-                  {year.months.map((month) => (
-                    <Accordion
-                      key={month.n}
-                      level="month"
-                      title={month.title}
-                      meta={`M${month.n}`}
-                    >
-                      <div className="month-detail-grid">
-                        <div className="month-detail full">
-                          <h5>Core Topics &amp; Skills</h5>
-                          <p>{month.core}</p>
-                        </div>
-                        {month.labs && (
-                          <div className="month-detail">
-                            <h5>Hands-On Work</h5>
-                            <p>{month.labs}</p>
-                          </div>
-                        )}
-                        <div className="month-detail">
-                          <h5>Portfolio Output</h5>
-                          <p>{month.portfolio}</p>
-                        </div>
-                        <div className="month-detail">
-                          <h5>Assessment</h5>
-                          <p>{month.assessment}</p>
-                        </div>
-                        {month.hours !== undefined && (
-                          <div className="month-detail">
-                            <h5>Hours</h5>
-                            <p>
-                              {month.hours} hours{month.weeks ? ` · ${month.weeks} weeks` : ''}
-                            </p>
-                          </div>
-                        )}
-                        {month.stage && (
-                          <div className="month-detail">
-                            <h5>Stage</h5>
-                            <p>{month.stage}</p>
-                          </div>
-                        )}
-                      </div>
-                    </Accordion>
-                  ))}
-                </div>
-              </Accordion>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* PROJECTS */}
-      <section className="section" id="projects">
-        <div className="container">
-          <div className="section-head reveal">
-            <span className="eyebrow">Hands-On Projects</span>
-            <h2 className="section-title">Projects designed to become portfolio evidence.</h2>
-            <p className="section-sub">
-              Each project below is part of the published curriculum — they are curriculum
-              projects, not completed student work or testimonials. Every project develops
-              specific skills and creates documented output for the student portfolio.
-            </p>
-          </div>
-          <div className="grid-3">
-            {program.projects.map((proj, i) => (
-              <article
-                key={proj.title}
-                className={`project-card reveal reveal-d${(i % 3) + 1}`}
-              >
-                <span className="chip chip-neutral project-badge">Curriculum project</span>
-                <h3>{proj.title}</h3>
-                <p className="skills">
-                  <b>Skills · </b>
-                  {proj.skills}
-                </p>
-                <p className="produces">{proj.produces}</p>
-                {proj.evidence && (
-                  <p className="evidence">
-                    <b>Portfolio evidence · </b>
-                    {proj.evidence}
-                  </p>
-                )}
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ASSESSMENT */}
-      <section className="section bg-soft">
-        <div className="container">
-          <div className="section-head reveal">
-            <span className="eyebrow">Assessment Model</span>
-            <h2 className="section-title">Learn → Practice → Build → Assess → Document</h2>
-            <p className="section-sub">
-              Assessment is part of the learning system — not an afterthought. Here is how progress
-              is measured throughout the program.
-            </p>
-          </div>
-          <div className="assess-grid">
-            {program.assessmentModel.map((item, i) => (
-              <div key={i} className="assess-item reveal">
-                <span className="assess-num">{i + 1}</span>
-                <p>{item}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CERTIFICATION */}
-      <section className="section" id="certification">
-        <div className="container container-narrow">
-          <div className="section-head reveal">
-            <span className="eyebrow">Certification Preparation</span>
-            <h2 className="section-title">Certification roadmaps built into the program.</h2>
-            <p className="section-sub">
-              Certification preparation is embedded within the curriculum. The exams and
-              credentials are issued by the external organisations — NeuroMind does not award
-              them. External certification exams are optional.
-            </p>
-          </div>
-          <div className="cert-list reveal">
-            {program.certifications.map((cert) => (
-              <div key={cert.name} className="cert-item">
-                <span className="cert-name">{cert.name}</span>
-                <span className="cert-window">{cert.window}</span>
-                <span className="cert-role">{cert.role}</span>
-              </div>
-            ))}
-          </div>
-          {program.certNote && (
-            <div className="cert-note reveal">
-              <b>Important:</b> {program.certNote}
-            </div>
-          )}
-        </div>
-      </section>
-
-      {/* PORTFOLIO JOURNEY */}
-      <section className="section bg-soft">
-        <div className="container container-narrow">
-          <div className="section-head reveal">
-            <span className="eyebrow">Portfolio Development</span>
-            <h2 className="section-title">Your portfolio grows with you.</h2>
-            <p className="section-sub">
-              From first artifact to professional capstone — a visual journey of documented progress.
-            </p>
-          </div>
-          <div className="journey reveal">
-            {program.portfolioJourney.map((j) => (
-              <div key={j.milestone} className="journey-row">
-                <span className="journey-milestone">{j.milestone}</span>
-                <span className="journey-output">{j.output}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* SKILLS */}
-      <section className="section">
-        <div className="container">
-          <div className="section-head reveal">
-            <span className="eyebrow">Skills Developed</span>
-            <h2 className="section-title">What you will be able to do.</h2>
-          </div>
-          <div className="skills-grid">
-            {program.skills.map((group) => (
-              <div key={group.group} className="skill-group reveal">
-                <h3>{group.group}</h3>
-                <ul>
-                  {group.items.map((item) => (
-                    <li key={item}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ROLES */}
-      <section className="section bg-soft">
-        <div className="container">
-          <div className="section-head reveal">
-            <span className="eyebrow">Potential Role Areas</span>
-            <h2 className="section-title">Where this program can lead.</h2>
-            <p className="section-sub">
-              These are potential role areas aligned with the curriculum. Actual outcomes depend on
-              individual effort, portfolio strength, employer requirements and market conditions —
-              no employment is guaranteed.
-            </p>
-          </div>
-          <div className="roles-grid">
-            {program.roles.map((role) => (
-              <div key={role.role} className="role-item reveal">
-                <div className="role-name">{role.role}</div>
-                <div className="role-note">{role.note}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* NOTES */}
-      <section className="section">
-        <div className="container container-narrow">
-          <div className="section-head reveal">
-            <span className="eyebrow">Program Notes</span>
-            <h2 className="section-title">Important information.</h2>
-          </div>
-          <ul className="notes-list reveal">
-            {program.notes.map((note) => (
-              <li key={note}>
-                <span className="bullet" aria-hidden="true" />
-                {note}
-              </li>
-            ))}
-            {program.hardware && (
-              <li>
-                <span className="bullet" aria-hidden="true" />
-                <span><b>Hardware requirements.</b> {program.hardware}</span>
-              </li>
-            )}
-          </ul>
-        </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="section bg-soft" id="faq">
-        <div className="container container-narrow">
-          <div className="section-head reveal">
-            <span className="eyebrow">FAQ</span>
-            <h2 className="section-title">Common questions about this program.</h2>
-          </div>
-          <div className="accordion reveal">
-            {program.faqs.map((f, i) => (
-              <Accordion key={f.q} defaultOpen={i === 0} title={f.q}>
-                <p style={{ fontSize: '0.9375rem', color: 'var(--ink-2)', lineHeight: 1.7 }}>{f.a}</p>
-              </Accordion>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* FINAL CTA */}
-      <section className="section">
-        <CtaSection
-          title="Ready to explore this path?"
-          sub="Take the next step — explore the full curriculum in detail, or talk to NeuroMind about your questions."
-          primary={{ label: 'Explore the Curriculum', to: '#curriculum' }}
-          secondary={{ label: 'Talk to NeuroMind', to: `/contact?program=${program.slug}` }}
-          tertiary={{ label: 'Compare Programs', to: '/programs#compare' }}
-        />
-      </section>
-      <div style={{ height: 32 }} />
-
-      {/* Other programs */}
-      <section className="section-tight bg-soft">
-        <div className="container">
-          <div className="section-head reveal" style={{ marginBottom: 28 }}>
-            <span className="eyebrow">Other Programs</span>
-            <h2 className="section-title" style={{ fontSize: '1.5rem' }}>Explore more pathways.</h2>
-          </div>
-          <div className="grid-3">
+        <div className="container pd-other">
+          <h3 className="pd-other-title">Explore other programs</h3>
+          <div className="pd-other-links">
             {programs
               .filter((p) => p.slug !== program.slug)
               .map((p) => (
-                <Link
-                  key={p.slug}
-                  to={`/programs/${p.slug}`}
-                  className="card card-hover reveal"
-                  style={{
-                    ['--accent' as string]: p.accent,
-                    ['--accent-soft' as string]: p.accentSoft,
-                    ['--accent-ink' as string]: p.accentInk,
-                    ['--accent-strong' as string]: p.accentStrong,
-                  }}
-                >
-                  <span className="chip" style={{ marginBottom: 12 }}>
-                    {p.category === 'foundation' ? 'Foundation' : 'Professional'}
+                <Link key={p.slug} to={`/programs/${p.slug}`} className="pd-other-link">
+                  <span>
+                    <span className="pd-other-name">{p.shortTitle}</span>
+                    <span className="pd-other-meta">{p.duration}</span>
                   </span>
-                  <h3 style={{ fontSize: '1.0625rem', marginBottom: 6 }}>{p.shortTitle}</h3>
-                  <p style={{ fontSize: '0.875rem', color: 'var(--ink-3)', marginBottom: 14 }}>{p.tagline}</p>
-                  <span className="link-arrow" style={{ fontSize: '0.875rem' }}>
-                    View program <ArrowRight size={14} />
-                  </span>
+                  <ArrowRight />
                 </Link>
               ))}
           </div>
         </div>
       </section>
-      <div style={{ height: 32 }} />
 
       {/* Mobile sticky action bar — under 768px only (CSS-gated) */}
       <nav className={`program-cta-bar${keyboardOpen ? ' kb-open' : ''}`} aria-label="Program actions">
