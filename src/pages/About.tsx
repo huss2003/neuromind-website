@@ -5,7 +5,6 @@ import { programs } from '../data';
 import SectionHead from '../components/SectionHead';
 import CtaSection from '../components/CtaSection';
 import { ArrowRight, Check } from '../components/Icons';
-import PlaceholderNote from '../components/Placeholder';
 
 export default function About() {
   useReveal();
@@ -70,9 +69,10 @@ export default function About() {
                 things.
               </p>
               <p style={{ fontSize: '1rem', color: 'var(--ink-2)', lineHeight: 1.8 }}>
-                NeuroMind was created to bridge that gap: programs that begin at absolute beginner
-                level, progress step by step through documented curricula, and produce tangible
-                evidence of learning — projects, portfolios and certification readiness.
+                NeuroMind was founded by Jair D Souza to bridge that gap: programs that begin at
+                absolute beginner level, progress step by step through documented curricula, and
+                produce tangible evidence of learning — projects, portfolios and certification
+                readiness.
               </p>
             </div>
             <div className="reveal reveal-d2">
@@ -98,24 +98,10 @@ export default function About() {
         </div>
       </section>
 
-      {/* FOUNDER */}
-      <section className="section">
-        <div className="container container-narrow" style={{ textAlign: 'center' }}>
-          <div className="reveal">
-            <span className="eyebrow" style={{ justifyContent: 'center' }}>Founder</span>
-            <h2 className="section-title">Jair D Souza</h2>
-            <p className="section-sub" style={{ maxWidth: 520, marginInline: 'auto' }}>
-              Founder of NeuroMind. Leading the institution's vision for practical, honest and
-              accessible technology education.
-            </p>
-            <div style={{ marginTop: 32, maxWidth: 520, marginInline: 'auto' }}>
-              <PlaceholderNote label="Founder message — not yet published">
-                A personal message from Jair D Souza will be published here once available.
-              </PlaceholderNote>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Re-insertion point — FOUNDER section.
+          Owner content needed before restoring: an approved personal message
+          (and optional bio) from Jair D Souza. Until then the verified founder
+          name is mentioned inline in "Why NeuroMind Exists" above. */}
 
       {/* PHILOSOPHY + MODEL */}
       <section className="section bg-soft">
@@ -189,26 +175,9 @@ export default function About() {
         </div>
       </section>
 
-      {/* FUTURE VISION */}
-      <section className="section bg-soft">
-        <div className="container container-narrow" style={{ textAlign: 'center' }}>
-          <div className="reveal">
-            <span className="eyebrow" style={{ justifyContent: 'center' }}>Future Vision</span>
-            <h2 className="section-title">Growing thoughtfully.</h2>
-            <p className="section-sub" style={{ maxWidth: 520, marginInline: 'auto' }}>
-              NeuroMind is building toward a broader ecosystem of technology education — including
-              expanded programs, deeper learning resources and enhanced student experiences. Details
-              will be shared as they are finalized.
-            </p>
-            <div style={{ marginTop: 28, maxWidth: 480, marginInline: 'auto' }}>
-              <PlaceholderNote label="Mission & vision — not yet published">
-                Official mission and vision statements will be published here once NeuroMind
-                confirms them.
-              </PlaceholderNote>
-            </div>
-          </div>
-        </div>
-      </section>
+      {/* Re-insertion point — FUTURE VISION section.
+          Owner content needed before restoring: confirmed mission and vision
+          statements (and any dated roadmap). */}
 
       <section className="section">
         <CtaSection

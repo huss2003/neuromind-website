@@ -5,6 +5,7 @@
    ============================================================ */
 
 :root {
+  color-scheme: light;
   /* Brand */
   --deep: #0f172a;
   --deep-soft: #1e293b;
@@ -203,12 +204,12 @@ h1, h2, h3, h4, h5 {
 }
 
 .btn-secondary {
-  background: #fff;
+  background: var(--card);
   color: var(--ink);
   border-color: var(--line-strong);
 }
 .btn-secondary:hover {
-  border-color: var(--accent, var(--blue));
+  border-color: var(--accent-strong, var(--blue));
   color: var(--accent-ink, var(--blue));
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
@@ -365,7 +366,7 @@ h1, h2, h3, h4, h5 {
   bottom: 0;
   z-index: 201;
   width: min(320px, 88vw);
-  background: #fff;
+  background: var(--card);
   box-shadow: var(--shadow-xl);
   transform: translateX(100%);
   transition: transform var(--t-base);
@@ -416,7 +417,7 @@ h1, h2, h3, h4, h5 {
   max-width: 300px;
   line-height: 1.7;
 }
-.footer h4 {
+.footer .footer-heading {
   color: #fff;
   font-size: 0.875rem;
   font-weight: 600;
@@ -440,7 +441,7 @@ h1, h2, h3, h4, h5 {
   gap: 16px;
   flex-wrap: wrap;
   font-size: 0.875rem;
-  color: #64748b;
+  color: #94a3b8;
 }
 .footer-bottom strong { color: #cbd5e1; font-weight: 600; }
 
@@ -449,7 +450,7 @@ h1, h2, h3, h4, h5 {
   position: relative;
   padding-top: calc(var(--nav-h) + 72px);
   padding-bottom: 88px;
-  background: linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%);
+  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--card) 100%);
   overflow: hidden;
 }
 .hero-grid {
@@ -463,7 +464,7 @@ h1, h2, h3, h4, h5 {
   align-items: center;
   gap: 8px;
   padding: 6px 14px 6px 6px;
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-pill);
   font-size: 0.8125rem;
@@ -521,7 +522,7 @@ h1, h2, h3, h4, h5 {
 /* Hero visual — progression path */
 .hero-visual {
   position: relative;
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-xl);
   padding: 32px;
@@ -564,7 +565,7 @@ h1, h2, h3, h4, h5 {
   font-size: 0.8125rem;
   font-weight: 700;
   font-family: var(--font-head);
-  color: #fff;
+  color: var(--step-ink, #fff);
   background: var(--step-color, var(--blue));
   flex-shrink: 0;
   box-shadow: 0 0 0 4px var(--step-soft, var(--blue-50));
@@ -640,7 +641,7 @@ h1, h2, h3, h4, h5 {
 .program-card .btn { margin-top: auto; align-self: flex-start; }
 .program-card.foundation-card {
   border-color: color-mix(in srgb, var(--purple) 25%, var(--line));
-  background: linear-gradient(180deg, var(--purple-50) 0%, #fff 40%);
+  background: linear-gradient(180deg, var(--purple-50) 0%, var(--card) 40%);
 }
 
 /* ---------- Progression strip ---------- */
@@ -656,7 +657,7 @@ h1, h2, h3, h4, h5 {
   flex: 1;
   min-width: 140px;
   padding: 20px 18px;
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   position: relative;
 }
@@ -667,7 +668,7 @@ h1, h2, h3, h4, h5 {
   font-family: var(--font-head);
   font-size: 0.75rem;
   font-weight: 700;
-  color: var(--strip-color, var(--blue));
+  color: var(--strip-ink, var(--strip-color, var(--blue)));
   margin-bottom: 6px;
 }
 .prog-strip-label {
@@ -684,7 +685,7 @@ h1, h2, h3, h4, h5 {
   overflow-x: auto;
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
-  background: #fff;
+  background: var(--card);
   -webkit-overflow-scrolling: touch;
 }
 .comparison-table {
@@ -724,7 +725,7 @@ h1, h2, h3, h4, h5 {
 .acc-item {
   border: 1px solid var(--line);
   border-radius: var(--r-md);
-  background: #fff;
+  background: var(--card);
   overflow: hidden;
   transition: border-color var(--t-base), box-shadow var(--t-base);
 }
@@ -776,7 +777,7 @@ h1, h2, h3, h4, h5 {
   gap: 10px;
   flex-wrap: wrap;
 }
-.acc-year-meta .chip { font-size: 0.6875rem; }
+.acc-year-meta .chip { font-size: 0.75rem; }
 
 /* Month cards inside year */
 .month-list { display: flex; flex-direction: column; gap: 10px; }
@@ -804,10 +805,10 @@ h1, h2, h3, h4, h5 {
 .month-title { flex: 1; min-width: 0; }
 .month-props { display: flex; gap: 8px; flex-shrink: 0; }
 .month-prop {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--ink-3);
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   padding: 3px 8px;
   border-radius: var(--r-pill);
@@ -819,11 +820,11 @@ h1, h2, h3, h4, h5 {
   gap: 16px;
 }
 .month-detail h5 {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--accent, var(--blue));
+  color: var(--accent-ink, var(--blue));
   margin-bottom: 6px;
 }
 .month-detail p { font-size: 0.875rem; color: var(--ink-2); line-height: 1.6; }
@@ -885,7 +886,7 @@ h1, h2, h3, h4, h5 {
 
 /* ---------- Project cards ---------- */
 .project-card {
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   padding: 24px;
@@ -930,7 +931,7 @@ h1, h2, h3, h4, h5 {
   grid-template-columns: 1fr auto;
   gap: 8px 16px;
   padding: 18px 20px;
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
   transition: border-color var(--t-base), box-shadow var(--t-base);
@@ -971,7 +972,7 @@ h1, h2, h3, h4, h5 {
   overflow: hidden;
 }
 .fact-cell {
-  background: #fff;
+  background: var(--card);
   padding: 24px;
   text-align: center;
 }
@@ -1090,7 +1091,7 @@ h1, h2, h3, h4, h5 {
 }
 .hmc-backdrop.open { opacity: 1; pointer-events: auto; }
 .hmc-modal {
-  background: #fff;
+  background: var(--card);
   border-radius: var(--r-xl);
   width: min(620px, 100%);
   max-height: min(84vh, 780px);
@@ -1157,7 +1158,7 @@ h1, h2, h3, h4, h5 {
   text-align: left;
   transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
   width: 100%;
-  background: #fff;
+  background: var(--card);
 }
 .hmc-option:hover { border-color: var(--blue); color: var(--ink); background: var(--blue-50); }
 .hmc-option.selected {
@@ -1215,7 +1216,7 @@ h1, h2, h3, h4, h5 {
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
   text-align: left;
   width: 100%;
-  background: #fff;
+  background: var(--card);
 }
 .hmc-result-card:hover { border-color: var(--blue); box-shadow: var(--shadow-sm); }
 .hmc-result-card .rc-title { font-family: var(--font-head); font-weight: 600; color: var(--ink); font-size: 1rem; margin-bottom: 2px; }
@@ -1225,7 +1226,7 @@ h1, h2, h3, h4, h5 {
 .page-hero {
   padding-top: calc(var(--nav-h) + 64px);
   padding-bottom: 56px;
-  background: linear-gradient(180deg, var(--bg-soft) 0%, #fff 100%);
+  background: linear-gradient(180deg, var(--bg-soft) 0%, var(--card) 100%);
   border-bottom: 1px solid var(--line);
 }
 .breadcrumb {
@@ -1237,9 +1238,9 @@ h1, h2, h3, h4, h5 {
   margin-bottom: 20px;
   flex-wrap: wrap;
 }
-.breadcrumb a { color: var(--ink-3); transition: color var(--t-fast); }
+.breadcrumb a { color: var(--ink-3); min-height: 44px; display: inline-flex; align-items: center; transition: color var(--t-fast); }
 .breadcrumb a:hover { color: var(--blue); }
-.breadcrumb .sep { color: var(--ink-4); }
+.breadcrumb .sep { color: var(--ink-3); }
 .breadcrumb [aria-current] { color: var(--ink-2); font-weight: 500; }
 .page-hero h1 { font-size: clamp(2rem, 4.2vw, 3rem); margin-bottom: 14px; }
 .page-hero .hero-sub { margin-bottom: 0; }
@@ -1256,7 +1257,7 @@ h1, h2, h3, h4, h5 {
   flex-direction: column;
   gap: 2px;
   padding: 12px 18px;
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
   min-width: 110px;
@@ -1291,7 +1292,7 @@ h1, h2, h3, h4, h5 {
   font-weight: 600;
   font-size: 0.8125rem;
 }
-.detail-progression .dp-arrow { color: var(--ink-4); }
+.detail-progression .dp-arrow { color: var(--ink-3); }
 
 /* Portfolio journey */
 .journey { display: flex; flex-direction: column; gap: 0; }
@@ -1316,7 +1317,7 @@ h1, h2, h3, h4, h5 {
 .roles-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
 .role-item {
   padding: 18px 20px;
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
   transition: border-color var(--t-base), box-shadow var(--t-base);
@@ -1329,7 +1330,7 @@ h1, h2, h3, h4, h5 {
 .skills-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
 .skill-group {
   padding: 22px 24px;
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
 }
@@ -1385,7 +1386,7 @@ h1, h2, h3, h4, h5 {
   display: flex;
   gap: 14px;
   padding: 18px 20px;
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
   align-items: flex-start;
@@ -1408,7 +1409,7 @@ h1, h2, h3, h4, h5 {
 
 /* ---------- Forms ---------- */
 .form-card {
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-xl);
   padding: 40px;
@@ -1431,7 +1432,7 @@ h1, h2, h3, h4, h5 {
   border-radius: var(--r-md);
   font-size: 0.9375rem;
   color: var(--ink);
-  background: #fff;
+  background: var(--card);
   transition: border-color var(--t-fast), box-shadow var(--t-fast);
   width: 100%;
 }
@@ -1440,7 +1441,6 @@ h1, h2, h3, h4, h5 {
 .form-field input:focus,
 .form-field select:focus,
 .form-field textarea:focus {
-  outline: none;
   border-color: var(--blue);
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--blue) 18%, transparent);
 }
@@ -1485,7 +1485,7 @@ h1, h2, h3, h4, h5 {
   font-weight: 500;
   color: var(--ink-2);
   transition: border-color var(--t-fast), background var(--t-fast), color var(--t-fast);
-  background: #fff;
+  background: var(--card);
   cursor: pointer;
 }
 .radio-pill:hover { border-color: var(--blue); color: var(--blue); }
@@ -1524,7 +1524,7 @@ h1, h2, h3, h4, h5 {
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 8px;
-  border: 2px solid #fff;
+  border: 2px solid var(--bg);
 }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
@@ -1654,7 +1654,7 @@ h1, h2, h3, h4, h5 {
 .section-nav-inner a:hover { color: var(--ink); }
 .section-nav-inner a.active {
   color: var(--accent-ink, var(--blue));
-  border-bottom-color: var(--accent, var(--blue));
+  border-bottom-color: var(--accent-strong, var(--blue));
   font-weight: 600;
 }
 .section-nav-cta {
@@ -1668,8 +1668,8 @@ h1, h2, h3, h4, h5 {
   font-weight: 600 !important;
 }
 .section-nav-cta:hover {
-  border-color: var(--accent, var(--blue)) !important;
-  color: var(--accent, var(--blue)) !important;
+  border-color: var(--accent-ink, var(--blue)) !important;
+  color: var(--accent-ink, var(--blue)) !important;
 }
 
 /* Year-at-a-glance summary cards */
@@ -1680,7 +1680,7 @@ h1, h2, h3, h4, h5 {
   margin-bottom: 28px;
 }
 .year-glance {
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
   padding: 20px 22px;
@@ -1721,7 +1721,7 @@ h1, h2, h3, h4, h5 {
 }
 .ph-label {
   display: inline-block;
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.06em;
   text-transform: uppercase;
@@ -1754,7 +1754,7 @@ dialog.hmc-modal::backdrop {
 /* Mobile comparison — stacked cards instead of horizontal scroll */
 .compare-mobile { display: none; }
 .compare-mobile-card {
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-lg);
   padding: 22px;
@@ -1776,7 +1776,7 @@ dialog.hmc-modal::backdrop {
 }
 .cm-row:last-child { border-bottom: none; }
 .cm-row dt {
-  font-size: 0.6875rem;
+  font-size: 0.75rem;
   font-weight: 700;
   letter-spacing: 0.05em;
   text-transform: uppercase;
@@ -1856,7 +1856,7 @@ dialog.hmc-modal::backdrop {
   gap: 16px;
 }
 .cg-card {
-  background: #fff;
+  background: var(--card);
   border: 1px solid var(--line);
   border-radius: var(--r-md);
   padding: 20px;
@@ -1953,4 +1953,331 @@ dialog.hmc-modal::backdrop {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
+}
+
+/* ---------- Audit fixes: target sizes (WCAG 2.5.8 + 44px guidance) ---------- */
+.btn, .btn-lg { min-height: 44px; }
+.nav-logo { min-height: 44px; }
+.nav-links a { min-height: 44px; display: inline-flex; align-items: center; }
+.footer-links { gap: 0; }
+.footer-links a { min-height: 44px; display: inline-flex; align-items: center; }
+.hmc-close { width: 44px; height: 44px; }
+.link-arrow { min-height: 44px; }
+.acc-trigger { min-height: 44px; }
+
+/* Scrollable regions must be keyboard reachable + visibly focused (WCAG 2.1.1 / 2.4.7) */
+.prog-strip:focus-visible,
+.comparison-wrap:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 3px;
+}
+
+/* Horizontal progression strip affordance on small screens */
+@media (max-width: 768px) {
+  .prog-strip { -webkit-overflow-scrolling: touch; scroll-snap-type: x proximity; }
+  .prog-strip-step { scroll-snap-align: start; }
+}
+
+/* === hero compaction pass === */
+/* Tighten hero vertical rhythm so both CTAs fit the first viewport at common
+   laptop sizes (1366x768, 1440x900). Overrides rely on source order; scoped
+   to .hero so inner-page .hero-sub is untouched. */
+.hero { padding-top: calc(var(--nav-h) + 48px); padding-bottom: 56px; }
+.hero .hero-badge { margin-bottom: 16px; }
+.hero h1 { font-size: clamp(2.25rem, 4vw, 3rem); margin-bottom: 16px; }
+.hero .hero-sub { font-size: 1.0625rem; line-height: 1.6; margin-bottom: 24px; }
+.hero .hero-actions { margin-bottom: 28px; }
+
+/* === about/contact pass === */
+
+/* Contact — prominent preview notice, above all form fields */
+.form-preview-notice {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  background: var(--orange-50);
+  border: 1px solid color-mix(in srgb, var(--orange) 45%, transparent);
+  border-left: 4px solid var(--orange);
+  border-radius: var(--r-md);
+  padding: 16px 18px;
+  margin-bottom: 20px;
+}
+.form-preview-notice .fpn-icon {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--orange) 18%, transparent);
+  color: #92400e;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.form-preview-notice strong {
+  display: block;
+  color: #92400e;
+  font-size: 0.9375rem;
+  margin-bottom: 4px;
+}
+.form-preview-notice p {
+  font-size: 0.875rem;
+  color: var(--ink-2);
+  line-height: 1.6;
+  max-width: 56ch;
+}
+
+/* Accordion headings (WAI-ARIA accordion pattern: heading wraps the trigger button) */
+.acc-heading { margin: 0; font-size: inherit; font-weight: inherit; }
+/* Progression separator arrows: decorative but visible -> needs 3:1 */
+.dp-arrow { color: var(--ink-3); }
+
+/* Certification disclosure summary is interactive -> 44px target */
+.cert-details summary { min-height: 44px; display: flex; align-items: center; }
+
+/* Mobile comparison card titles are links -> 44px target */
+.compare-mobile-card h3 a { min-height: 44px; display: inline-flex; align-items: center; }
+.program-card h3 a, .project-card h3 a, .cg-card h3 a { min-height: 44px; display: inline-flex; align-items: center; }
+
+/* === chooser pass === */
+/* Hint text under each question — own margin/spacing so it never overlaps
+   the question or options, even at 360-390px viewport widths. */
+.hmc-hint {
+  font-size: 0.8125rem;
+  color: var(--ink-3);
+  margin: -10px 0 16px;
+  line-height: 1.5;
+}
+/* Small viewports: keep question, hint, and option list on separate lines
+   (no overlap) and let long option labels wrap instead of overflowing. */
+@media (max-width: 390px) {
+  .hmc-hint { margin: -6px 0 12px; }
+  .hmc-option { padding: 12px 14px; gap: 10px; line-height: 1.4; }
+}
+
+/* === programs page pass === */
+
+/* 1. Hero compaction — cards visible in the first desktop viewport */
+.page-hero-tight { padding-top: calc(var(--nav-h) + 40px); padding-bottom: 28px; }
+.page-hero-tight .breadcrumb { margin-bottom: 12px; }
+.page-hero-tight h1 { margin-bottom: 8px; }
+.page-hero-tight .hero-sub { font-size: 1.0625rem; line-height: 1.6; }
+.programs-hero-actions { margin-top: 16px; }
+
+/* Programs section: cards start sooner */
+.section-programs { padding-top: 40px; }
+.programs-group + .programs-group { margin-top: 40px; }
+.programs-group-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.programs-group-note { font-size: 0.875rem; color: var(--ink-3); }
+.programs-foundation { max-width: 480px; }
+
+/* 2. Card type label — distinguishes foundation from specializations at a glance */
+.pc-head { display: flex; flex-direction: column; align-items: flex-start; gap: 0; }
+.pc-type {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  background: var(--bg-tint);
+  color: var(--ink-2);
+  margin-bottom: 10px;
+}
+.pc-type-foundation { background: var(--purple-50); color: #6d28d9; }
+.program-card h3 { margin-top: 0; }
+
+/* 3. Fact strip — scannable, no badge wall at phone widths */
+.pc-facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0 0 14px;
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 10px 12px;
+}
+.pc-fact { display: flex; flex-direction: column; gap: 1px; min-width: 0; }
+.pc-fact dt {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.pc-fact dd {
+  margin: 0;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+.pc-focus {
+  font-size: 0.8125rem;
+  color: var(--ink-2);
+  line-height: 1.55;
+  margin: 0 0 12px;
+}
+.pc-focus b { color: var(--ink-2); font-weight: 700; }
+.pc-progression {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 4px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--ink-2);
+  margin: 0 0 20px;
+}
+.pc-arrow { color: var(--ink-4); font-weight: 400; }
+
+/* Foundation card gets a distinct top border (accent already purple via data) */
+.program-card.foundation-card { border-top: 3px solid var(--purple); }
+
+/* Phone widths (360–390px): keep type, entry and CTA readable, no horizontal scroll */
+@media (max-width: 400px) {
+  .pc-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); padding: 8px; gap: 6px; }
+  .pc-fact dt { font-size: 0.625rem; }
+  .pc-fact dd { font-size: 0.75rem; }
+  .program-card { padding: 20px 16px; }
+  .program-card h3 { font-size: 1.0625rem; }
+  .pc-progression { font-size: 0.6875rem; }
+}
+
+/* 4. Comparison — glance type label + full detailed table below (progressive disclosure) */
+.cg-type {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 4px 10px;
+  border-radius: var(--r-pill);
+  background: var(--bg-tint);
+  color: var(--ink-2);
+  margin-bottom: 8px;
+}
+.cg-type-foundation { background: var(--purple-50); color: #6d28d9; }
+
+/* Narrow phones: glance fact grid becomes 2 columns; values wrap, never scroll */
+@media (max-width: 400px) {
+  .cg-grid { grid-template-columns: 1fr; }
+  .cg-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
+  .cg-fact { grid-template-columns: 1fr; gap: 1px; }
+  .cg-fact dt { font-size: 0.625rem; }
+  .cg-fact dd { font-size: 0.75rem; overflow-wrap: anywhere; }
+  .cg-card { padding: 16px; }
+}
+
+/* === program detail pass === */
+
+/* Factual year-by-year timeline (horizontal on desktop, vertical at 360px).
+   Static <ol> — no interactivity or animation, so it is keyboard- and
+   reduced-motion-safe by construction. */
+.year-timeline {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 16px;
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  counter-reset: year-tl;
+}
+.year-tl-step {
+  position: relative;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.year-tl-marker {
+  flex-shrink: 0;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-head);
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: var(--accent-ink, var(--blue));
+  background: var(--accent-soft, var(--blue-50));
+  border: 1.5px solid color-mix(in srgb, var(--accent, var(--blue)) 35%, transparent);
+  border-radius: 50%;
+}
+/* Connector line between markers (desktop, horizontal flow) */
+.year-tl-step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 17px;
+  left: 46px;
+  right: -16px;
+  height: 2px;
+  background: color-mix(in srgb, var(--accent, var(--blue)) 22%, transparent);
+}
+.year-tl-card {
+  flex: 1;
+  min-width: 0;
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--r-md);
+  padding: 14px 16px;
+}
+.year-tl-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+.year-tl-title {
+  font-family: var(--font-head);
+  font-size: 0.9375rem;
+  color: var(--ink);
+}
+.year-tl-hours {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--accent-ink, var(--blue));
+}
+.year-tl-themes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.year-tl-themes li {
+  font-size: 0.75rem;
+  color: var(--ink-2);
+  background: var(--bg-tint);
+  border-radius: var(--r-pill);
+  padding: 3px 10px;
+  line-height: 1.4;
+}
+
+@media (max-width: 768px) {
+  /* Vertical timeline on mobile — one step per row, connector runs down */
+  .year-timeline { grid-auto-flow: row; }
+  .year-tl-step:not(:last-child)::after {
+    top: 40px;
+    bottom: -16px;
+    left: 17px;
+    right: auto;
+    width: 2px;
+    height: auto;
+  }
 }

@@ -37,7 +37,7 @@ export default function Contact() {
   useReveal();
   usePageMeta(
     'Contact — NeuroMind',
-    'Get in touch with NeuroMind. Ask questions about programs, request information, or get help choosing the right technology education pathway.',
+    'Contact NeuroMind. Questions about programs, admissions or choosing the right pathway — see what is available and what is still being set up.',
   );
 
   const set = (key: keyof FormState, value: string) => {
@@ -63,6 +63,22 @@ export default function Contact() {
     ev.preventDefault();
     const e = validate();
     setErrors(e);
+    if (Object.keys(e).length > 0) {
+      // Move focus to the first invalid control so its label + error are announced
+      // (WCAG 3.3.1 Error Identification / 3.3.3 Error Suggestion).
+      const order: (keyof FormState)[] = ['name', 'email', 'role', 'education', 'program'];
+      const ids: Record<string, string> = {
+        name: 'c-name', email: 'c-email', role: 'c-role-student',
+        education: 'c-education', program: 'c-program',
+      };
+      const first = order.find((k) => e[k]);
+      const el = first ? document.getElementById(ids[first]) : null;
+      if (el) {
+        el.focus();
+        el.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+      return;
+    }
     if (Object.keys(e).length === 0) {
       try {
         await submitInquiry(form);
@@ -83,10 +99,10 @@ export default function Contact() {
             <span className="sep" aria-hidden="true">/</span>
             <span aria-current="page">Contact</span>
           </nav>
-          <h1>Get in Touch</h1>
+          <h1>Contact NeuroMind</h1>
           <p className="hero-sub">
-            Have questions about a program? Want help choosing the right pathway? Send us an
-            inquiry and tell us a little about yourself.
+            Questions about programs, admissions or choosing the right pathway? This page
+            explains how to reach NeuroMind — and where our inquiry form currently stands.
           </p>
         </div>
       </section>
@@ -146,21 +162,32 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={onSubmit} noValidate>
-                <div className="form-preview-badge">
-                  <Info size={13} /> Preview — not connected
+                <h2 style={{ fontSize: '1.5rem', marginBottom: 12 }}>Program Inquiry</h2>
+                <div
+                  className="form-preview-notice"
+                  role="note"
+                  aria-labelledby="c-preview-notice-title"
+                >
+                  <div className="fpn-icon" aria-hidden="true">
+                    <Info size={18} />
+                  </div>
+                  <div>
+                    <strong id="c-preview-notice-title">
+                      This form is a preview — inquiries cannot be sent yet.
+                    </strong>
+                    <p>
+                      It is not connected to a live inquiry channel, so anything you enter is not
+                      transmitted or stored anywhere. You can still draft and review your
+                      inquiry below. Contact details will be published here once NeuroMind
+                      confirms them.
+                    </p>
+                  </div>
                 </div>
-                <h2 style={{ fontSize: '1.5rem', marginBottom: 6 }}>Program Inquiry</h2>
-                <p style={{ color: 'var(--ink-3)', marginBottom: 16, fontSize: '0.9375rem' }}>
+                <p style={{ color: 'var(--ink-3)', marginBottom: 20, fontSize: '0.9375rem' }}>
                   For students and parents with questions about programs. Fields marked with{' '}
                   <span className="req" style={{ color: '#dc2626' }}>*</span> are required; all
                   others are optional.
                 </p>
-                <div style={{ marginBottom: 24 }}>
-                  <PlaceholderNote label="Before this form goes live">
-                    This inquiry form is not connected to a live channel yet — nothing entered here
-                    is sent or stored. It will be wired up before launch.
-                  </PlaceholderNote>
-                </div>
 
                 <div className="form-grid">
                   <div className="form-field">
@@ -213,12 +240,13 @@ export default function Contact() {
                     <label>
                       I am a… <span className="req" aria-hidden="true">*</span>
                     </label>
-                    <div className="radio-group" role="radiogroup" aria-label="I am a">
+                    <div className="radio-group" role="radiogroup" aria-label="I am a" aria-describedby={errors.role ? 'c-role-err' : undefined}>
                       {['Student', 'Parent', 'Other'].map((opt) => (
                         <label key={opt} className={`radio-pill${form.role === opt ? ' checked' : ''}`}>
                           <input
                             type="radio"
                             name="role"
+                            id={`c-role-${opt.toLowerCase()}`}
                             value={opt}
                             checked={form.role === opt}
                             onChange={() => set('role', opt)}
@@ -227,7 +255,7 @@ export default function Contact() {
                         </label>
                       ))}
                     </div>
-                    {errors.role && <span className="form-error">{errors.role}</span>}
+                    {errors.role && <span className="form-error" id="c-role-err">{errors.role}</span>}
                   </div>
 
                   <div className="form-field">

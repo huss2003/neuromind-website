@@ -2,37 +2,70 @@ import { programs, comparisonRows } from '../data';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from './Icons';
 
+/* Display order: most decision-relevant facts first. comparisonRows (data)
+   stays untouched; order and display labels live here. */
+const FACT_ORDER = [
+  'Entry Level',
+  'Duration',
+  'Weekly Commitment',
+  'Total Hours',
+  'Focus',
+  'Progression',
+  'Projects',
+  'Assessment',
+] as const;
+
+const FACT_LABEL: Record<string, string> = {
+  Projects: 'Example output',
+};
+
+const orderedFacts = FACT_ORDER.map((label) => comparisonRows.find((r) => r.label === label))
+  .filter((r): r is (typeof comparisonRows)[number] => Boolean(r));
+
+const typeOf = (p: (typeof programs)[number]) =>
+  p.category === 'foundation' ? '1-Year Foundation' : '3-Year Specialization';
+
+/* Data files use 'Class 10 Passed'; display copy standardizes to 'Class 10 passed'. */
+const entryDisplay = (s: string) => s.replace('Class 10 Passed', 'Class 10 passed');
+
 export default function ComparisonTable() {
   const foundation = programs.filter((p) => p.category === 'foundation');
   const professionals = programs.filter((p) => p.category === 'professional');
 
   const glanceCard = (p: (typeof programs)[number]) => {
-    const focusRow = comparisonRows.find((r) => r.label === 'Focus');
-    const projectsRow = comparisonRows.find((r) => r.label === 'Projects');
     const pi = programs.indexOf(p);
+    const focusRow = orderedFacts.find((r) => r.label === 'Focus');
+    const projectsRow = orderedFacts.find((r) => r.label === 'Projects');
     return (
       <div
         key={p.slug}
         className={`cg-card${p.category === 'foundation' ? ' foundation' : ''}`}
         style={{ ['--cg-accent' as string]: p.accent }}
       >
+        <span className={`cg-type${p.category === 'foundation' ? ' cg-type-foundation' : ''}`}>
+          {typeOf(p)}
+        </span>
         <h3>
           <Link to={`/programs/${p.slug}`}>{p.shortTitle}</Link>
         </h3>
         <dl className="cg-facts">
           <div className="cg-fact">
+            <dt>Type</dt>
+            <dd>{typeOf(p)}</dd>
+          </div>
+          <div className="cg-fact">
+            <dt>Entry</dt>
+            <dd>{entryDisplay(p.entry)}</dd>
+          </div>
+          <div className="cg-fact">
             <dt>Duration</dt>
             <dd>{p.duration}</dd>
           </div>
           <div className="cg-fact">
-            <dt>Commitment</dt>
+            <dt>Weekly</dt>
             <dd>
               {p.weekly} · {p.hours} total
             </dd>
-          </div>
-          <div className="cg-fact">
-            <dt>Entry</dt>
-            <dd>{p.entry}</dd>
           </div>
         </dl>
         <p className="cg-focus">{focusRow?.values[pi]}</p>
@@ -46,6 +79,22 @@ export default function ComparisonTable() {
       </div>
     );
   };
+
+  const certDetails = (p: (typeof programs)[number]) => (
+    <details className="cert-details">
+      <summary>
+        {p.certifications.length} certification roadmap
+        {p.certifications.length > 1 ? 's' : ''} — view list
+      </summary>
+      <ul>
+        {p.certifications.map((c) => (
+          <li key={c.name}>
+            {c.name} <span style={{ color: 'var(--ink-3)' }}>({c.window})</span>
+          </li>
+        ))}
+      </ul>
+    </details>
+  );
 
   return (
     <>
@@ -72,8 +121,9 @@ export default function ComparisonTable() {
       >
         <table className="comparison-table">
           <caption className="sr-only">
-            Detailed comparison of all four NeuroMind programs across duration, hours, entry
-            level, focus, progression, projects, certification preparation and assessment.
+            Detailed comparison of all four NeuroMind programs across program type, entry
+            level, duration, weekly commitment, hours, focus, progression, example output,
+            assessment and certification preparation.
           </caption>
           <thead>
             <tr>
@@ -88,34 +138,24 @@ export default function ComparisonTable() {
             </tr>
           </thead>
           <tbody>
-            {comparisonRows
-              .filter((row) => row.label !== 'Certification Preparation')
-              .map((row) => (
-                <tr key={row.label}>
-                  <th scope="row">{row.label}</th>
-                  {row.values.map((v, i) => (
-                    <td key={i}>{v}</td>
-                  ))}
-                </tr>
+            <tr>
+              <th scope="row">Program Type</th>
+              {programs.map((p) => (
+                <td key={p.slug}>{typeOf(p)}</td>
               ))}
+            </tr>
+            {orderedFacts.map((row) => (
+              <tr key={row.label}>
+                <th scope="row">{FACT_LABEL[row.label] ?? row.label}</th>
+                {row.values.map((v, i) => (
+                  <td key={i}>{row.label === 'Entry Level' ? entryDisplay(v) : v}</td>
+                ))}
+              </tr>
+            ))}
             <tr>
               <th scope="row">Certification Preparation</th>
               {programs.map((p) => (
-                <td key={p.slug}>
-                  <details className="cert-details">
-                    <summary>
-                      {p.certifications.length} certification roadmap
-                      {p.certifications.length > 1 ? 's' : ''} — view list
-                    </summary>
-                    <ul>
-                      {p.certifications.map((c) => (
-                        <li key={c.name}>
-                          {c.name} <span style={{ color: 'var(--ink-3)' }}>({c.window})</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                </td>
+                <td key={p.slug}>{certDetails(p)}</td>
               ))}
             </tr>
             <tr>
@@ -137,37 +177,21 @@ export default function ComparisonTable() {
         {programs.map((p, pi) => (
           <div key={p.slug} className="compare-mobile-card" style={{ ['--accent' as string]: p.accent }}>
             <span className="chip chip-neutral" style={{ marginBottom: 8 }}>
-              {p.category === 'foundation' ? '1-year foundation' : '3-year specialization'}
+              {typeOf(p)}
             </span>
             <h3>
               <Link to={`/programs/${p.slug}`}>{p.shortTitle}</Link>
             </h3>
             <dl>
-              {comparisonRows
-                .filter((row) => row.label !== 'Certification Preparation')
-                .map((row) => (
-                  <div key={row.label} className="cm-row">
-                    <dt>{row.label}</dt>
-                    <dd>{row.values[pi]}</dd>
-                  </div>
-                ))}
+              {orderedFacts.map((row) => (
+                <div key={row.label} className="cm-row">
+                  <dt>{FACT_LABEL[row.label] ?? row.label}</dt>
+                  <dd>{row.label === 'Entry Level' ? entryDisplay(row.values[pi]) : row.values[pi]}</dd>
+                </div>
+              ))}
               <div className="cm-row">
                 <dt>Certification Preparation</dt>
-                <dd>
-                  <details className="cert-details">
-                    <summary>
-                      {p.certifications.length} certification roadmap
-                      {p.certifications.length > 1 ? 's' : ''} — view list
-                    </summary>
-                    <ul>
-                      {p.certifications.map((c) => (
-                        <li key={c.name}>
-                          {c.name} <span style={{ color: 'var(--ink-3)' }}>({c.window})</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
-                </dd>
+                <dd>{certDetails(p)}</dd>
               </div>
             </dl>
             <Link to={`/programs/${p.slug}`} className="link-arrow">

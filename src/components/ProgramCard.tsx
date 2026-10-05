@@ -4,44 +4,48 @@ import { ArrowRight } from './Icons';
 
 export default function ProgramCard({ program }: { program: Program }) {
   const isFoundation = program.category === 'foundation';
+  const entry = isFoundation ? 'Standard 8' : 'Class 10 passed';
   return (
     <article
       className={`program-card card-hover${isFoundation ? ' foundation-card' : ''}`}
       style={{ ['--card-accent' as string]: program.accent }}
     >
-      <div className="chip-row">
-        {program.cardChips.map((chip) => (
-          <span
-            key={chip}
-            className="chip"
-            style={
-              isFoundation
-                ? { background: '#f5f3ff', color: '#6d28d9' }
-                : undefined
-            }
-          >
-            {chip}
-          </span>
-        ))}
+      <div className="pc-head">
+        <span className={`pc-type${isFoundation ? ' pc-type-foundation' : ''}`}>
+          {isFoundation ? '1-Year Foundation' : '3-Year Specialization'}
+        </span>
+        <h3>{program.cardTitle}</h3>
+        <p className="card-tagline">{program.tagline}</p>
       </div>
 
-      <h3>{program.cardTitle}</h3>
-      <p className="card-tagline">{program.tagline}</p>
+      <dl className="pc-facts">
+        <div className="pc-fact">
+          <dt>Duration</dt>
+          <dd>{isFoundation ? '1 year' : '3 years'}</dd>
+        </div>
+        <div className="pc-fact">
+          <dt>Weekly</dt>
+          <dd>{isFoundation ? '2 hrs/week' : '4 hrs/week'}</dd>
+        </div>
+        <div className="pc-fact">
+          <dt>Entry</dt>
+          <dd>{entry}</dd>
+        </div>
+      </dl>
 
-      <ul className="card-areas">
-        {program.areas.slice(0, 4).map((a) => (
-          <li key={a}>{a}</li>
-        ))}
-      </ul>
+      <p className="pc-focus">
+        <b>Focus · </b>
+        {program.areas.slice(0, 3).join(' · ')}
+      </p>
 
-      <div className="card-prog">
+      <p className="pc-progression">
         {program.progression.map((stage, i) => (
           <span key={stage}>
-            {i > 0 && <span aria-hidden="true"> → </span>}
-            <b>{stage}</b>
+            {i > 0 && <span className="pc-arrow" aria-hidden="true"> → </span>}
+            {stage}
           </span>
         ))}
-      </div>
+      </p>
 
       <Link
         to={`/programs/${program.slug}`}

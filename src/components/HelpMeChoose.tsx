@@ -56,6 +56,126 @@ interface Result {
   reason: string;
 }
 
+export interface Scored {
+  program: Program;
+  score: number;
+  reason: string;
+}
+
+/**
+ * Pure scoring — no React state, no side effects, nothing sent or stored.
+ * Every answer contributes: Q2 (education) gates eligibility, Q1 (interest)
+ * and Q3 (enjoyment) carry equal weight and drive the reason text, Q4
+ * (tech comfort) is a light tiebreaker. Reasons are built from the visitor's
+ * actual selected labels, so a card can never quote the wrong answer, and
+ * conflicting answers surface BOTH programs, each credited to its own answer.
+ */
+export function scoreAnswers(ans: number[]): Scored[] {
+  const interestIdx = ans[0];
+  const eduIdx = ans[1];
+  const enjoyIdx = ans[2];
+  const techIdx = ans[3];
+  const interest = questions[0].options[interestIdx];
+  const enjoyment = questions[2].options[enjoyIdx];
+  // 3 = "I'm not sure yet", 5 = "Not sure yet" — those carry no directional weight.
+  const interestLabel = interestIdx !== 3 ? interest.label : null;
+  const enjoyLabel = enjoyIdx !== 5 ? enjoyment.label : null;
+  const underage = eduIdx === 0; // Standard 8 or 9
+
+  // Education gating: Standard 8 meets only the foundation entry requirement.
+  const eligible = underage
+    ? programs.filter((p) => p.slug === 'ai-foundation')
+    : programs;
+
+  // ponytail: flat 2-point weights, fine for 4 programs; revisit only if options grow.
+  const scored: Scored[] = eligible.map((p) => {
+    const interestMatch = interestLabel !== null && interest.slugs.includes(p.slug);
+    const enjoyMatch = enjoyLabel !== null && enjoyment.slugs.includes(p.slug);
+    let score = 0;
+    if (interestMatch) score += 2;
+    if (enjoyMatch) score += 2;
+    // Complete beginner → the gentler 2 hrs/week foundation pace gets a nudge;
+    // otherwise professional programs nudge ahead of the 1-year literacy course.
+    if (techIdx === 0) {
+      if (p.slug === 'ai-foundation') score += 1;
+    } else if (p.slug !== 'ai-foundation') {
+      score += 1;
+    }
+
+    let reason: string;
+    if (interestMatch && enjoyMatch) {
+      reason = `Matches your interest in ${interestLabel}, and you said you enjoy ${enjoyLabel}.`;
+    } else if (interestMatch) {
+      reason = `Matches your interest in ${interestLabel}.`;
+    } else if (enjoyMatch) {
+      reason = `Because you said you enjoy ${enjoyLabel}.`;
+    } else if (underage) {
+      reason =
+        'Your starting point from Standard 8 — professional programs open after Class 10 passed.';
+    } else if (p.slug === 'ai-foundation') {
+      reason =
+        'A short, beginner-friendly year to explore AI before choosing a longer specialization.';
+    } else {
+      reason = 'One of the full professional pathways — explore the curriculum to see if it fits.';
+    }
+    return { program: p, score, reason };
+  });
+
+  return scored.sort((a, b) => b.score - a.score).slice(0, 3);
+}
+
+/**
+ * Dev-only assert self-test: fails loudly (throws at import) if a reason ever
+ * mislabels an answer, if underage gating breaks, or if conflicting answers
+ * stop surfacing both programs. Not shipped in production builds.
+ */
+function selfTestScoreAnswers(): void {
+  const fail = (m: string): never => {
+    throw new Error(`scoreAnswers self-test failed: ${m}`);
+  };
+  const labels = questions.flatMap((q) => q.options.map((o) => o.label));
+
+  // Every reason must quote only labels the visitor actually selected, and
+  // Standard 8 or 9 must yield only the foundation program.
+  for (let a = 0; a < 4; a++)
+    for (let e = 0; e < 3; e++)
+      for (let j = 0; j < 6; j++)
+        for (let t = 0; t < 3; t++) {
+          const ans = [a, e, j, t];
+          const chosen = ans.map((oi, qi) => questions[qi].options[oi].label);
+          for (const s of scoreAnswers(ans)) {
+            for (const label of labels) {
+              if (s.reason.includes(label) && !chosen.includes(label)) {
+                fail(`reason "${s.reason}" quotes unselected label "${label}" for answers ${JSON.stringify(ans)}`);
+              }
+            }
+          }
+          if (e === 0) {
+            const res = scoreAnswers(ans);
+            if (res.length !== 1 || res[0].program.slug !== 'ai-foundation') {
+              fail(`Standard 8 or 9 must return only the foundation program for ${JSON.stringify(ans)}`);
+            }
+          }
+        }
+
+  // The reported bug: interest 'AI & Data' + enjoyment 'Designing experiences'.
+  // Both programs must appear, each reason quoting its own answer.
+  const conflict = scoreAnswers([0, 1, 3, 1]);
+  const slugs = conflict.map((s) => s.program.slug);
+  if (!slugs.includes('data-science-ai') || !slugs.includes('product-ux-ai-design')) {
+    fail('conflicting answers must show both the interest and the enjoyment program');
+  }
+  const dsai = conflict.find((s) => s.program.slug === 'data-science-ai');
+  const pux = conflict.find((s) => s.program.slug === 'product-ux-ai-design');
+  if (!dsai || !dsai.reason.includes('AI & Data')) {
+    fail('data-science-ai reason must quote the interest answer');
+  }
+  if (!pux || !pux.reason.includes('Designing experiences')) {
+    fail('product-ux reason must quote the enjoyment answer');
+  }
+}
+if (import.meta.env.DEV) selfTestScoreAnswers();
+
 export default function HelpMeChoose({
   open,
   onClose,
@@ -95,54 +215,10 @@ export default function HelpMeChoose({
       return;
     }
 
-    // Education answer (question 2) decides entry-level eligibility.
-    // Standard 8 or 9 meets only the foundation entry requirement (Standard 8).
-    const eduIndex = next[1];
-    const eligible = new Set(
-      eduIndex === 0
-        ? ['ai-foundation']
-        : programs.map((p) => p.slug),
-    );
-
-    const interestIdx = next[0];
-    const enjoyIdx = next[2];
-    const interestLabel = questions[0].options[interestIdx].label;
-    const enjoyLabel = questions[2].options[enjoyIdx].label;
-    const exploring = interestIdx === 3 && enjoyIdx === 5;
-
-    const scored = programs
-      .filter((p) => eligible.has(p.slug))
-      .map((p) => {
-        const primary = questions[0].options[interestIdx].slugs[0];
-        const interestMatch =
-          interestIdx !== 3 && questions[0].options[interestIdx].slugs.includes(p.slug);
-        const enjoyMatch =
-          enjoyIdx !== 5 && questions[2].options[enjoyIdx].slugs.includes(p.slug);
-        const score =
-          (p.slug === primary ? 10 : 0) + (interestMatch ? 6 : 0) + (enjoyMatch ? 4 : 0);
-
-        let reason: string;
-        if (exploring) {
-          reason =
-            p.category === 'foundation'
-              ? 'A short, beginner-friendly year to explore AI before choosing a longer specialization.'
-              : 'One of the full professional pathways — explore the curriculum to see if it fits.';
-        } else if (interestMatch && enjoyMatch) {
-          reason = `Matches your interest in ${interestLabel.toLowerCase()} and what you enjoy — ${enjoyLabel.toLowerCase()}.`;
-        } else if (interestMatch) {
-          reason = `Matches your interest in ${interestLabel.toLowerCase()}.`;
-        } else if (enjoyMatch) {
-          reason = `Builds on what you enjoy most — ${enjoyLabel.toLowerCase()}.`;
-        } else {
-          reason = 'Shares core topics with your stated interests.';
-        }
-        return { p, score, reason };
-      })
-      .sort((a, b) => b.score - a.score)
-      .slice(0, 3);
-
-    setResult(scored.map((s) => ({ program: s.p, reason: s.reason })));
-    setUnderage(eduIndex === 0);
+    // All scoring, gating, and reason text live in the pure scoreAnswers().
+    const scored = scoreAnswers(next);
+    setResult(scored.map((s) => ({ program: s.program, reason: s.reason })));
+    setUnderage(next[1] === 0);
   };
 
   return (
@@ -179,11 +255,7 @@ export default function HelpMeChoose({
             <p className="hmc-q">
               {step + 1}. {questions[step].q}
             </p>
-            {questions[step].hint && (
-              <p style={{ fontSize: '0.8125rem', color: 'var(--ink-3)', margin: '-10px 0 16px' }}>
-                {questions[step].hint}
-              </p>
-            )}
+            {questions[step].hint && <p className="hmc-hint">{questions[step].hint}</p>}
             <div className="hmc-options" role="radiogroup" aria-label={questions[step].q}>
               {questions[step].options.map((opt, oi) => (
                 <button

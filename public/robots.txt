@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://neuromind-website-nine.vercel.app/sitemap.xml

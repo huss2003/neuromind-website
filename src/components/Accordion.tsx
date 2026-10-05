@@ -27,8 +27,11 @@ export default function Accordion({
     onOpenChange?.(next);
   };
 
+  const Heading = (level === 'month' ? 'h4' : 'h3') as 'h3' | 'h4';
+
   return (
     <div className={level === 'month' ? 'month-card' : 'acc-item'} data-open={open}>
+      <Heading className="acc-heading">
       <button
         type="button"
         className="acc-trigger"
@@ -58,6 +61,7 @@ export default function Accordion({
           </span>
         )}
       </button>
+      </Heading>
       <div className="acc-body" id={id} role="region">
         <div className="acc-body-inner">
           <div className="acc-content">{children}</div>

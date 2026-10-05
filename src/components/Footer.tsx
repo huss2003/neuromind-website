@@ -25,7 +25,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4>Programs</h4>
+            <h2 className="footer-heading">Programs</h2>
             <ul className="footer-links">
               {programs.map((p) => (
                 <li key={p.slug}>
@@ -36,7 +36,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4>Explore</h4>
+            <h2 className="footer-heading">Explore</h2>
             <ul className="footer-links">
               <li><Link to="/programs">All Programs</Link></li>
               <li><Link to="/#why">Why NeuroMind</Link></li>
@@ -49,7 +49,7 @@ export default function Footer() {
           </div>
 
           <div>
-            <h4>Institution</h4>
+            <h2 className="footer-heading">Institution</h2>
             <ul className="footer-links">
               <li><Link to="/about">About NeuroMind</Link></li>
               <li><Link to="/contact">Contact</Link></li>

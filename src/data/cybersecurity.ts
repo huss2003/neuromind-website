@@ -16,7 +16,7 @@ export const cybersecurity: Program = {
   duration: '3 Years · 36 Months',
   hours: '624 Hours',
   weekly: '4 Hours/Week',
-  entry: 'Class 10 Passed',
+  entry: 'Class 10 passed',
   calendar: '52 Weeks/Year · 156 Weeks Total · 208 Hours/Year',
   progression: ['Absolute Beginner', 'Beginner', 'Intermediate', 'Advanced', 'Professional / Job-ready'],
   cardChips: ['3 YEARS', '624 HOURS', '4 HRS/WEEK', 'CLASS 10 PASSED'],

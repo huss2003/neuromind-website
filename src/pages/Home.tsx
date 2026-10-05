@@ -12,11 +12,11 @@ import { ArrowRight, Check, Compass } from '../components/Icons';
 import PlaceholderNote from '../components/Placeholder';
 
 const learningModel = [
-  { num: '01', label: 'Understand', desc: 'Learn concepts from zero, with clear explanations and real examples.', color: '#2563EB', soft: '#EFF6FF' },
-  { num: '02', label: 'Explore', desc: 'See how technology works in real situations and professional contexts.', color: '#7C3AED', soft: '#F5F3FF' },
-  { num: '03', label: 'Build', desc: 'Apply knowledge through hands-on labs and practical work every month.', color: '#06B6D4', soft: '#ECFEFF' },
-  { num: '04', label: 'Create', desc: 'Develop projects and portfolio evidence that demonstrate real capability.', color: '#10B981', soft: '#ECFDF5' },
-  { num: '05', label: 'Progress', desc: 'Move steadily toward advanced and professional-level skills.', color: '#F59E0B', soft: '#FFFBEB' },
+  { num: '01', label: 'Understand', desc: 'Learn concepts from zero, with clear explanations and real examples.', color: '#2563EB', soft: '#EFF6FF', inkOnLight: '#1D4ED8' },
+  { num: '02', label: 'Explore', desc: 'See how technology works in real situations and professional contexts.', color: '#7C3AED', soft: '#F5F3FF', inkOnLight: '#5B21B6' },
+  { num: '03', label: 'Build', desc: 'Apply knowledge through hands-on labs and practical work every month.', color: '#06B6D4', soft: '#ECFEFF', inkOnLight: '#0E7490' },
+  { num: '04', label: 'Create', desc: 'Develop projects and portfolio evidence that demonstrate real capability.', color: '#10B981', soft: '#ECFDF5', inkOnLight: '#047857' },
+  { num: '05', label: 'Progress', desc: 'Move steadily toward advanced and professional-level skills.', color: '#F59E0B', soft: '#FFFBEB', inkOnLight: '#B45309' },
 ];
 
 const whyCards = [
@@ -68,11 +68,11 @@ const faqs = [
 
 function LearningPathVisual() {
   const steps = [
-    { label: 'Beginner', desc: 'Absolute beginner entry', color: '#2563EB', soft: '#EFF6FF' },
-    { label: 'Learning', desc: 'Structured concepts + labs', color: '#7C3AED', soft: '#F5F3FF' },
-    { label: 'Building', desc: 'Hands-on projects monthly', color: '#06B6D4', soft: '#ECFEFF' },
-    { label: 'Creating', desc: 'Portfolio evidence', color: '#10B981', soft: '#ECFDF5' },
-    { label: 'Professional', desc: 'Professional-level capability', color: '#F59E0B', soft: '#FFFBEB' },
+    { label: 'Beginner', desc: 'Absolute beginner entry', color: '#2563EB', soft: '#EFF6FF', inkOnAccent: '#FFFFFF' },
+    { label: 'Learning', desc: 'Structured concepts + labs', color: '#7C3AED', soft: '#F5F3FF', inkOnAccent: '#FFFFFF' },
+    { label: 'Building', desc: 'Hands-on projects monthly', color: '#06B6D4', soft: '#ECFEFF', inkOnAccent: '#0F172A' },
+    { label: 'Creating', desc: 'Portfolio evidence', color: '#10B981', soft: '#ECFDF5', inkOnAccent: '#0F172A' },
+    { label: 'Professional', desc: 'Professional-level capability', color: '#F59E0B', soft: '#FFFBEB', inkOnAccent: '#0F172A' },
   ];
   return (
     <div className="hero-visual reveal">
@@ -82,7 +82,7 @@ function LearningPathVisual() {
           <div
             key={s.label}
             className="prog-step"
-            style={{ ['--step-color' as string]: s.color, ['--step-soft' as string]: s.soft }}
+            style={{ ['--step-color' as string]: s.color, ['--step-soft' as string]: s.soft, ['--step-ink' as string]: s.inkOnAccent }}
           >
             <span className="prog-dot" aria-hidden="true">
               {i + 1}
@@ -121,9 +121,8 @@ export default function Home() {
             </h1>
             <p className="hero-sub reveal reveal-d2">
               Structured pathways in AI, Data Science, Cybersecurity and Product &amp; UX design —
-              built to take students from absolute beginner foundations toward practical skills,
-              projects and professional portfolios. Designed for school students from Standard 8
-              onwards; no prior technical knowledge is needed.
+              from absolute beginner foundations to professional portfolios. No prior technical
+              knowledge needed.
             </p>
             <div className="hero-actions reveal reveal-d3">
               <Link to="/programs" className="btn btn-primary btn-lg">
@@ -151,7 +150,7 @@ export default function Home() {
                 <span>Foundation program entry</span>
               </div>
               <div className="hero-trust-item">
-                <strong>Class 10 Passed</strong>
+                <strong>Class 10 passed</strong>
                 <span>Professional programs entry</span>
               </div>
             </div>
@@ -216,12 +215,17 @@ export default function Home() {
             sub="Every NeuroMind program follows the same learning model — whether you study for one year or three. This is how knowledge connects."
             center
           />
-          <div className="prog-strip reveal">
+          <div
+            className="prog-strip reveal"
+            role="region"
+            aria-label="NeuroMind learning model: Understand, Explore, Build, Create, Progress"
+            tabIndex={0}
+          >
             {learningModel.map((step) => (
               <div
                 key={step.num}
                 className="prog-strip-step"
-                style={{ ['--strip-color' as string]: step.color }}
+                style={{ ['--strip-color' as string]: step.color, ['--strip-ink' as string]: step.inkOnLight }}
               >
                 <div className="prog-strip-num">{step.num}</div>
                 <div className="prog-strip-label">{step.label}</div>
@@ -366,7 +370,7 @@ export default function Home() {
                     {proj.program}
                   </span>
                 </div>
-                <h4>{proj.title}</h4>
+                <h3>{proj.title}</h3>
                 <p className="skills">
                   <b>Skills · </b>
                   {proj.skills}
@@ -419,7 +423,7 @@ export default function Home() {
                       }}
                     >
                       <span style={{ color: 'var(--ink-2)', fontWeight: 500 }}>{c.name}</span>
-                      <span style={{ color: p.accent, fontWeight: 600, fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
+                      <span style={{ color: p.accentInk, fontWeight: 600, fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
                         {c.window}
                       </span>
                     </li>
@@ -491,7 +495,7 @@ export default function Home() {
             <div className="reveal reveal-d2">
               <div className="fit-note">
                 <div className="accent-bar" aria-hidden="true" />
-                <h4>For Students &amp; Parents</h4>
+                <h3>For Students &amp; Parents</h3>
                 <p style={{ marginBottom: 16 }}>
                   Every program page answers the questions that matter: What will my child learn?
                   How many hours per week? How are they assessed? What will they build? What

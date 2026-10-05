@@ -19,7 +19,7 @@ export default function Programs() {
 
   return (
     <>
-      <section className="page-hero">
+      <section className="page-hero page-hero-tight">
         <div className="container">
           <nav className="breadcrumb" aria-label="Breadcrumb">
             <a href="/">Home</a>
@@ -28,10 +28,10 @@ export default function Programs() {
           </nav>
           <h1>Programs</h1>
           <p className="hero-sub">
-            Two levels of study, four technology pathways — every program starts from absolute
-            beginner level and progresses toward practical, professional capability.
+            One 1-year foundation and three 3-year specializations — every program
+            starts from absolute beginner level.
           </p>
-          <div style={{ marginTop: 24 }}>
+          <div className="programs-hero-actions">
             <button className="btn btn-secondary" onClick={() => setHmcOpen(true)}>
               <Compass /> Help Me Choose
             </button>
@@ -39,25 +39,26 @@ export default function Programs() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section section-programs">
         <div className="container">
-          <div style={{ marginBottom: 48 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20 }}>
-              <span className="chip chip-purple">Foundation Program</span>
-              <span style={{ fontSize: '0.875rem', color: 'var(--ink-3)' }}>
-                Build AI literacy before choosing a specialization
+          <h2 className="sr-only">Program choices</h2>
+          <div className="programs-group">
+            <div className="programs-group-head">
+              <span className="chip chip-purple">1-Year Foundation</span>
+              <span className="programs-group-note">
+                AI literacy first · Standard 8 entry · 2 hrs/week · 104 hours
               </span>
             </div>
-            <div style={{ maxWidth: 480 }}>
+            <div className="programs-foundation">
               <ProgramCard program={foundationProgram} />
             </div>
           </div>
 
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
-              <span className="chip">Professional Specializations</span>
-              <span style={{ fontSize: '0.875rem', color: 'var(--ink-3)' }}>
-                3-year pathways · 624 hours · Class 10 passed entry
+          <div className="programs-group">
+            <div className="programs-group-head">
+              <span className="chip">3-Year Professional Specializations</span>
+              <span className="programs-group-note">
+                Class 10 passed entry · 4 hrs/week · 624 hours each
               </span>
             </div>
             <div className="grid-3">

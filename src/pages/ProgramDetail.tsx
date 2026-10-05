@@ -82,7 +82,7 @@ export default function ProgramDetail() {
               <span className="df-lab">Weekly Commitment</span>
             </div>
             <div className="detail-fact">
-              <span className="df-val">{program.entry.replace(' Passed', '')}</span>
+              <span className="df-val">{program.entry}</span>
               <span className="df-lab">Entry Level</span>
             </div>
           </div>
@@ -162,9 +162,9 @@ export default function ProgramDetail() {
             <div className="reveal reveal-d2">
               <div className="fit-note">
                 <div className="accent-bar" aria-hidden="true" />
-                <h4>Before you choose</h4>
+                <h3>Before you choose</h3>
                 <p style={{ marginBottom: 16 }}>{program.beforeYouChoose}</p>
-                <h4 style={{ marginTop: 20 }}>Where you start</h4>
+                <h3 style={{ marginTop: 20 }}>Where you start</h3>
                 <p>{program.whereYouStart}</p>
               </div>
             </div>
@@ -208,6 +208,37 @@ export default function ProgramDetail() {
                 : `A structured ${program.years.length}-year journey. Expand each year to see the month-by-month curriculum.`}
             </p>
           </div>
+
+          {/* Factual year-by-year timeline — hours and themes derive from the curriculum data */}
+          <ol className="year-timeline reveal" aria-label="Year-by-year timeline">
+            {program.years.map((year) => {
+              const yearHours = year.months.reduce((s, m) => s + (m.hours ?? 0), 0);
+              // ponytail: themes split from year.focus text; promote to a data field if a year summary ever lacks a comma list
+              const themes = year.focus
+                .split('—')[0]
+                .split(/,| and /)
+                .map((t) => t.trim().replace(/\.$/, ''))
+                .map((t) => t.charAt(0).toUpperCase() + t.slice(1))
+                .filter((t) => t.length > 2)
+                .slice(0, 4);
+              return (
+                <li key={year.n} className="year-tl-step">
+                  <span className="year-tl-marker" aria-hidden="true">{year.n}</span>
+                  <div className="year-tl-card">
+                    <div className="year-tl-head">
+                      <strong className="year-tl-title">Year {year.n} — {year.label}</strong>
+                      <span className="year-tl-hours">{yearHours} hours</span>
+                    </div>
+                    <ul className="year-tl-themes">
+                      {themes.map((t) => (
+                        <li key={t}>{t}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </li>
+              );
+            })}
+          </ol>
 
           <div className="year-glance-grid">
             {program.years.map((year) => (
@@ -318,7 +349,7 @@ export default function ProgramDetail() {
                 className={`project-card reveal reveal-d${(i % 3) + 1}`}
               >
                 <span className="chip chip-neutral project-badge">Curriculum project</span>
-                <h4>{proj.title}</h4>
+                <h3>{proj.title}</h3>
                 <p className="skills">
                   <b>Skills · </b>
                   {proj.skills}
@@ -418,7 +449,7 @@ export default function ProgramDetail() {
           <div className="skills-grid">
             {program.skills.map((group) => (
               <div key={group.group} className="skill-group reveal">
-                <h4>{group.group}</h4>
+                <h3>{group.group}</h3>
                 <ul>
                   {group.items.map((item) => (
                     <li key={item}>{item}</li>
