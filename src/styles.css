@@ -2276,3 +2276,14 @@ dialog.hmc-modal::backdrop {
     height: auto;
   }
 }
+
+/* === route splitting pass === */
+/* Shown briefly while a lazy route chunk loads (deep links only; in-app
+   navigation after first visit is instant). No animation: static text works
+   even where animation frames don't run. */
+.route-loading {
+  padding: 96px 24px;
+  text-align: center;
+  color: var(--ink-3);
+  font-size: 0.9375rem;
+}

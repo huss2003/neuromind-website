@@ -38,8 +38,11 @@ export default function ProgramDetail() {
   }, [slug]);
 
   usePageMeta(
-    program ? `${program.shortTitle} — NeuroMind` : 'Program — NeuroMind',
-    program?.tagline,
+    program ? `${program.shortTitle} — NeuroMind` : 'Page Not Found — NeuroMind',
+    program
+      ? program.tagline
+      : 'The page you are looking for does not exist on NeuroMind.',
+    { noindex: !program },
   );
 
   if (!program) return <NotFound />;
