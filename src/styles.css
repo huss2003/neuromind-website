@@ -1076,20 +1076,6 @@ h1, h2, h3, h4, h5 {
 }
 
 /* ---------- Help Me Choose dialog ---------- */
-.hmc-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: 300;
-  background: rgba(15, 23, 42, 0.55);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 24px;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity var(--t-base);
-}
-.hmc-backdrop.open { opacity: 1; pointer-events: auto; }
 .hmc-modal {
   background: var(--card);
   border-radius: var(--r-xl);
@@ -1098,11 +1084,8 @@ h1, h2, h3, h4, h5 {
   display: flex;
   flex-direction: column;
   box-shadow: var(--shadow-xl);
-  transform: translateY(16px) scale(0.98);
-  transition: transform var(--t-base);
   overflow: hidden;
 }
-.hmc-backdrop.open .hmc-modal { transform: translateY(0) scale(1); }
 .hmc-head {
   display: flex;
   align-items: flex-start;
@@ -1745,7 +1728,19 @@ dialog.hmc-modal {
   margin: auto;
   max-width: min(620px, calc(100vw - 32px));
   max-height: min(84vh, 780px);
-  background: transparent;
+  background: var(--card);
+}
+/* A closed dialog MUST be display:none — the class-level display:flex above
+   would otherwise out-rank the UA's dialog:not([open]) rule, leaking the
+   closed chooser into the a11y tree, tab order and page flow. */
+dialog.hmc-modal:not([open]) { display: none; }
+/* Entry motion via keyframes, transform-only by design: animating opacity
+   would leave the dialog invisible in environments where animation frames
+   don't tick (e.g. throttled/headless renderers); a frozen transform only
+   offsets it imperceptibly. Reduced-motion guard collapses the duration. */
+dialog.hmc-modal[open] { animation: hmc-in var(--t-base); }
+@keyframes hmc-in {
+  from { transform: translateY(16px) scale(0.98); }
 }
 dialog.hmc-modal::backdrop {
   background: rgba(15, 23, 42, 0.55);

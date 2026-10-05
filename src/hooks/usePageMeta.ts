@@ -31,16 +31,19 @@ function setCanonical(path: string) {
 }
 
 /** Sets title, description, canonical and og:url per page; restores defaults on unmount. */
-export function usePageMeta(title: string, description?: string) {
+export function usePageMeta(title: string, description?: string, opts?: { noindex?: boolean }) {
+  const noindex = opts?.noindex ?? false;
   useEffect(() => {
     document.title = title;
     if (description) setMeta('name', 'description', description);
     setMeta('property', 'og:title', title);
     if (description) setMeta('property', 'og:description', description);
     setCanonical(window.location.pathname);
+    if (noindex) setMeta('name', 'robots', 'noindex,follow');
     return () => {
       document.title = DEFAULT_TITLE;
       setMeta('name', 'description', DEFAULT_DESC);
+      if (noindex) setMeta('name', 'robots', 'index,follow,max-image-preview:large');
     };
-  }, [title, description]);
+  }, [title, description, noindex]);
 }

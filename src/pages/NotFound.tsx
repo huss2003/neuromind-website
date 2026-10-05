@@ -3,7 +3,7 @@ import { ArrowRight } from '../components/Icons';
 import { usePageMeta } from '../hooks/usePageMeta';
 
 export default function NotFound() {
-  usePageMeta('Page Not Found — NeuroMind');
+  usePageMeta('Page Not Found — NeuroMind', 'The page you are looking for does not exist on NeuroMind.', { noindex: true });
   return (
     <section className="n404">
       <div className="container">
